@@ -14,11 +14,9 @@
   var stored = null;
   try { stored = localStorage.getItem('th-theme'); } catch (e) { /* private mode */ }
 
-  if (stored) {
-    root.setAttribute('data-theme', stored);
-  } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-    root.setAttribute('data-theme', 'light');
-  }
+  // Dark is the intended first impression, so first-time visitors always get it
+  // regardless of their OS setting. Only an explicit toggle switches to light.
+  root.setAttribute('data-theme', stored === 'light' ? 'light' : 'dark');
   syncThemeColor();
 
   var themeToggle = $('#themeToggle');
