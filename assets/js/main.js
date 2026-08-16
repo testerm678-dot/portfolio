@@ -282,32 +282,42 @@
 })();
 
 /* =====================================================================
-   Cursor glow + hover highlight.
-   The native cursor is left alone — hiding it costs the visitor the
-   pointer hand and text caret they rely on. Instead a soft light
-   trails the pointer and the component underneath warms up.
+   Golden cursor + glow.
+   Dot tracks the pointer exactly, ring eases behind it, and a wide warm
+   light pools underneath. Components under the pointer warm up too.
    Removable by deleting this block, its CSS section, and the
-   .cursor-glow div in index.html.
+   .cursor-glow / #curRing / #curDot divs in index.html.
    ===================================================================== */
 (function () {
   'use strict';
 
   var glow = document.querySelector('.cursor-glow');
-  if (!glow) return;
+  var ring = document.getElementById('curRing');
+  var dot  = document.getElementById('curDot');
+  if (!glow || !ring || !dot) return;
   if (!window.matchMedia('(pointer: fine)').matches) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // Components that may take the highlight — everything here is a block
-  // with its own border/background, so a shadow sits correctly on it.
+  // Block-level components that may take the highlight, so nothing
+  // inline picks up a stray shadow.
   var HOVERABLE = '.pcard, .card, .tl__card, .cinfo, .btn, .filter, .chip, .stack__group, .process li, .facts li, .icon-btn, .hero__social a';
 
   var body = document.body;
+  body.classList.add('cur-on');
+
   var mx = window.innerWidth / 2, my = window.innerHeight / 2;
-  var gx = mx, gy = my, seen = false, current = null;
+  var gx = mx, gy = my, rx = mx, ry = my;
+  var seen = false, current = null;
+
+  function show(on) {
+    body.classList.toggle('glow-on', on);
+    ring.classList.toggle('cur--hide', !on);
+    dot.classList.toggle('cur--hide', !on);
+  }
 
   document.addEventListener('mousemove', function (e) {
     mx = e.clientX; my = e.clientY;
-    if (!seen) { seen = true; gx = mx; gy = my; body.classList.add('glow-on'); }
+    if (!seen) { seen = true; gx = rx = mx; gy = ry = my; show(true); }
 
     var hit = e.target.closest ? e.target.closest(HOVERABLE) : null;
     if (hit !== current) {
@@ -315,25 +325,38 @@
       if (hit) hit.classList.add('is-hovered');
       current = hit;
       body.classList.toggle('glow-hot', !!hit);
+      body.classList.toggle('cur-hot', !!hit);
     }
+
+    // Native caret is clearer inside form fields — hide ours there.
+    var inField = !!(e.target.closest && e.target.closest('input, textarea'));
+    ring.classList.toggle('cur--hide', inField);
+    dot.classList.toggle('cur--hide', inField);
   }, { passive: true });
 
+  document.addEventListener('mousedown', function () { body.classList.add('cur-down'); });
+  document.addEventListener('mouseup', function () { body.classList.remove('cur-down'); });
   document.addEventListener('mouseleave', function () {
-    body.classList.remove('glow-on', 'glow-hot');
+    show(false);
+    body.classList.remove('glow-hot', 'cur-hot');
     if (current) { current.classList.remove('is-hovered'); current = null; }
   });
-  document.addEventListener('mouseenter', function () { body.classList.add('glow-on'); });
+  document.addEventListener('mouseenter', function () { show(true); });
 
   // Never leave a highlight stuck behind after a click navigates or filters.
   document.addEventListener('click', function () {
     if (current) { current.classList.remove('is-hovered'); current = null; }
-    body.classList.remove('glow-hot');
+    body.classList.remove('glow-hot', 'cur-hot');
   });
 
   (function frame() {
-    gx += (mx - gx) * 0.12;
-    gy += (my - gy) * 0.12;
+    gx += (mx - gx) * 0.10;   // glow trails furthest behind
+    gy += (my - gy) * 0.10;
+    rx += (mx - rx) * 0.22;   // ring follows more closely
+    ry += (my - ry) * 0.22;
     glow.style.transform = 'translate3d(' + gx + 'px,' + gy + 'px,0)';
+    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
+    dot.style.transform  = 'translate3d(' + mx + 'px,' + my + 'px,0)';
     window.requestAnimationFrame(frame);
   })();
 })();

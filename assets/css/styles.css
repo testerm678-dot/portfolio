@@ -596,44 +596,76 @@ strong { color: var(--text); font-weight: 650; }
   .section { padding: 20px 0; page-break-inside: avoid; }
 }
 
-/* ---------- Cursor glow + hover highlight ----------
-   The native cursor stays visible — familiar affordances (pointer hand,
-   text caret) are worth keeping. A soft light follows it, and whatever
-   is under it warms up. Fine pointers only. */
+/* ---------- Golden cursor + glow ----------
+   A visible golden cursor (dot + trailing ring) replaces the system
+   arrow, with a wide warm light pooled behind it. Fine pointers only;
+   text fields keep the native caret. */
 
+:root { --gold: #FFC24B; --gold-2: #FF9E2C; }
+[data-theme="light"] { --gold: #C8860D; --gold-2: #E08A00; }
+
+@media (pointer: fine) {
+  body.cur-on, body.cur-on * { cursor: none; }
+  body.cur-on input, body.cur-on textarea { cursor: text; }
+}
+
+/* wide light pooled under the pointer */
 .cursor-glow {
   position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none;
-  width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%;
+  width: 560px; height: 560px; margin: -280px 0 0 -280px; border-radius: 50%;
   opacity: 0; will-change: transform, opacity;
   transition: opacity .5s ease, width .45s ease, height .45s ease, margin .45s ease;
   background: radial-gradient(circle closest-side,
-    color-mix(in srgb, var(--accent) 22%, transparent),
-    color-mix(in srgb, var(--accent-2) 9%, transparent) 55%,
-    transparent 78%);
-  filter: blur(14px);
+    color-mix(in srgb, var(--gold) 34%, transparent),
+    color-mix(in srgb, var(--gold-2) 16%, transparent) 48%,
+    transparent 76%);
+  filter: blur(18px);
 }
-body.glow-on .cursor-glow { opacity: .55; }
-body.glow-hot .cursor-glow {
-  width: 460px; height: 460px; margin: -230px 0 0 -230px; opacity: .8;
-}
-[data-theme="light"] .cursor-glow { filter: blur(20px); }
-[data-theme="light"] body.glow-on .cursor-glow { opacity: .40; }
+body.glow-on .cursor-glow { opacity: .78; }
+body.glow-hot .cursor-glow { width: 760px; height: 760px; margin: -380px 0 0 -380px; opacity: 1; }
+[data-theme="light"] .cursor-glow { filter: blur(26px); }
+[data-theme="light"] body.glow-on .cursor-glow { opacity: .42; }
+[data-theme="light"] body.glow-hot .cursor-glow { opacity: .58; }
 
-/* Whatever the pointer is over lifts and warms. Applied by JS to a
-   short list of components so nothing inline gets a stray shadow. */
+/* the cursor itself */
+.cur { position: fixed; top: 0; left: 0; z-index: 300; pointer-events: none; will-change: transform; }
+.cur--hide { opacity: 0 !important; }
+
+#curDot {
+  width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--gold) 85%, transparent),
+              0 0 26px color-mix(in srgb, var(--gold-2) 55%, transparent);
+  transition: width .2s ease, height .2s ease, margin .2s ease, opacity .2s ease;
+}
+#curRing {
+  width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--gold) 75%, transparent);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  box-shadow: 0 0 26px -4px color-mix(in srgb, var(--gold) 60%, transparent),
+              inset 0 0 18px -6px color-mix(in srgb, var(--gold) 55%, transparent);
+  transition: width .26s cubic-bezier(.2,.8,.3,1), height .26s cubic-bezier(.2,.8,.3,1),
+              margin .26s cubic-bezier(.2,.8,.3,1), border-color .26s ease,
+              background .26s ease, opacity .2s ease;
+}
+body.cur-hot #curRing {
+  width: 74px; height: 74px; margin: -37px 0 0 -37px;
+  border-color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 15%, transparent);
+}
+body.cur-hot #curDot { width: 6px; height: 6px; margin: -3px 0 0 -3px; }
+body.cur-down #curRing { width: 30px; height: 30px; margin: -15px 0 0 -15px; }
+
+/* hovered components warm up */
 .is-hovered {
-  background-color: color-mix(in srgb, var(--accent) 7%, transparent) !important;
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent) !important;
-  box-shadow: 0 14px 40px -18px color-mix(in srgb, var(--accent) 70%, transparent),
-              0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+  background-color: color-mix(in srgb, var(--gold) 9%, transparent) !important;
+  border-color: color-mix(in srgb, var(--gold) 55%, transparent) !important;
+  box-shadow: 0 18px 50px -20px color-mix(in srgb, var(--gold) 85%, transparent),
+              0 0 0 1px color-mix(in srgb, var(--gold) 22%, transparent);
   transition: background-color .28s ease, border-color .28s ease, box-shadow .28s ease;
 }
 .pcard.is-hovered, .card.is-hovered, .tl__card.is-hovered { transform: translateY(-5px); }
 .cinfo.is-hovered { transform: translateX(5px); }
 
-@media (prefers-reduced-motion: reduce) {
-  .cursor-glow { display: none; }
-}
-@media (pointer: coarse), (max-width: 860px) {
-  .cursor-glow { display: none; }
-}
+@media (prefers-reduced-motion: reduce) { .cursor-glow, .cur { display: none; } }
+@media (pointer: coarse), (max-width: 860px) { .cursor-glow, .cur { display: none; } }
