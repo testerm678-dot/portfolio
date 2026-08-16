@@ -1,13 +1,29 @@
 # Tuhin Hossain — Software QA Engineer · Portfolio
 
+Live: **https://tuhin-hossain.vercel.app**
+
 A fast, responsive, single-page portfolio site. Pure HTML/CSS/JavaScript — **no build step, no dependencies**, so it can be hosted anywhere for free.
+
+## Design
+
+"**Console**" — a technical, document-like dark design, deliberately avoiding the
+generic portfolio-template look (gradients, glassmorphism, glowing blobs, fading
+cards). The rules it follows:
+
+- **No gradients, no shadows, no border-radius.** Structure comes from 1px hairline rules.
+- **One signal colour** (`--sig: #FFB000`) against near-black and warm off-white. Green and red appear only as status.
+- **Typography does the work** — Archivo at heavy weights for display, JetBrains Mono for every label and piece of metadata.
+- **Dense over airy.** Projects are a data table, not cards. Hovering a row inverts it.
+- **No scroll-reveal animation.** Content is present immediately; only the tool ticker moves.
+
+Dark only by design — there is no light theme, and the colour scheme does not follow the OS setting.
 
 ```
 Portfolio/
 ├── index.html                 # all content lives here
 ├── assets/
-│   ├── css/styles.css         # design tokens + all styling (light & dark themes)
-│   ├── js/main.js             # nav, theme, reveal, counters, filters, terminal, form
+│   ├── css/styles.css         # design tokens + all styling
+│   ├── js/main.js             # scroll-spy, contact form, footer year
 │   ├── img/tuhin.jpg          # profile photo (extracted from the CV)
 │   ├── img/favicon.svg        # tab icon
 │   └── docs/                  # downloadable CV PDFs
@@ -61,26 +77,25 @@ Go to [app.netlify.com/drop](https://app.netlify.com/drop) and drag this whole f
 | Live site URL (for SEO/schema) | `index.html` → JSON-LD `"url"`, and `sitemap.xml` |
 | Profile photo | replace `assets/img/tuhin.jpg` (square crop, 600×600 or larger looks best) |
 | CV file | replace the PDF in `assets/docs/` (keep the same filename, or update the link in the hero) |
-| Availability badge | `index.html` → the `.badge` line in the hero |
+| Availability / stats | `index.html` → the `.hero__sub` list, and the `◆ Available` line in the rail |
 
-### Linking a project card
+### Adding a project to the Systems table
 
-Every project card is **clickable as a whole** — the title carries an invisible overlay that
-covers the card, so clicking anywhere on it opens the live site in a new tab.
-
-All 10 cards are linked. When you add a **new** project card, give its title the same shape:
+Each row is a single `<a>` — the whole row is the link. Copy this into the `.sys` block,
+keeping the ID sequence (`S-11`, `S-12`, …):
 
 ```html
-<h3><a class="stretch" href="https://YOUR-URL-HERE" target="_blank" rel="noopener">Project Name <span class="ext" aria-hidden="true">↗</span></a></h3>
+<a class="sys__row" href="https://YOUR-URL-HERE" target="_blank" rel="noopener">
+  <span class="sys__id">S-11</span>
+  <span class="sys__nm"><b>Project Name</b><span>One line on what you tested.</span></span>
+  <span class="sys__meta">Web · Android</span>
+  <span class="sys__meta">Scale or users</span>
+  <span><span class="badge b-cli">Client</span></span>
+</a>
 ```
 
-and add a visible link row just before the card's closing `</article>`:
-
-```html
-<div class="pcard__links"><a href="https://YOUR-URL-HERE" target="_blank" rel="noopener">Live site ↗</a></div>
-```
-
-Set the card's `data-cat` to `product`, `client` or `practice` so the filter buttons pick it up.
+Badge classes: `b-live` (green — shipped and running), `b-mvp` (amber — MVP stage),
+`b-cli` (client delivery), `b-src` (links to source code).
 
 ---
 
@@ -103,14 +118,12 @@ Right now the form validates input and opens the visitor's mail client (`mailto:
 
 ## Features built in
 
-- **Dark / light theme** with system-preference detection and `localStorage` persistence
-- **Fully responsive** — 5-column stats down to a single-column mobile layout
-- **Animated hero terminal** that "runs" a regression suite, typed line by line
-- **Animated stat counters** that fire when scrolled into view
-- **Filterable project grid** — SaaS products / client work / automation repos
-- **Scroll-spy navigation**, scroll progress bar, back-to-top button
-- **Accessibility** — skip link, focus-visible rings, ARIA on nav/tabs/status, `prefers-reduced-motion` support
-- **SEO** — meta description, Open Graph + Twitter cards, JSON-LD `Person` schema, sitemap, robots.txt
+- **Fixed index rail** with portrait, section numbers and scroll-spy highlighting (collapses to a top bar on mobile)
+- **Systems table** — 10 shipped products as dense, hoverable rows, each linking to the live site or repo
+- **Contact form** with client-side validation (falls back to a pre-filled email — see below)
+- **Fully responsive** — rail layout down to single column
+- **Accessibility** — skip link, focus-visible rings, ARIA live status, `prefers-reduced-motion` support
+- **SEO** — meta description, canonical, Open Graph + Twitter cards, JSON-LD `Person` schema, sitemap, robots.txt
 - **Print stylesheet** — the page prints cleanly as a summary sheet
 
 ---
