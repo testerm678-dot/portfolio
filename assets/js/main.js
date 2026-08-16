@@ -280,3 +280,86 @@
   var yearEl = $('#year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 })();
+
+/* =====================================================================
+   Custom cursor — inspector reticle.
+   Dot tracks the pointer exactly; the ring eases behind it; the label
+   names whatever action sits under the pointer. Self-contained so it
+   can be removed by deleting this block plus its CSS and the three
+   #cur* divs in index.html.
+   ===================================================================== */
+(function () {
+  'use strict';
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+
+  var dot = document.getElementById('curDot');
+  var ring = document.getElementById('curRing');
+  var label = document.getElementById('curLabel');
+  if (!dot || !ring || !label) return;
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var body = document.body;
+  body.classList.add('cur-on');
+
+  var mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  var rx = mx, ry = my, seen = false;
+
+  function labelFor(el) {
+    if (el.closest('input, textarea')) return 'Type';
+
+    var a = el.closest('a[href]');
+    if (a) {
+      var h = a.getAttribute('href') || '';
+      if (h.indexOf('mailto:') === 0) return 'Compose';
+      if (h.indexOf('tel:') === 0) return 'Call';
+      if (a.hasAttribute('download')) return 'Download';
+      if (a.target === '_blank') return 'Open ↗';
+      if (a.classList.contains('stretch')) return 'View project';
+      return 'Go';
+    }
+
+    var b = el.closest('button');
+    if (b) {
+      if (b.classList.contains('filter')) return 'Filter';
+      if (b.id === 'themeToggle') return 'Theme';
+      if (b.type === 'submit') return 'Send';
+      return 'Select';
+    }
+
+    if (el.closest('.pcard')) return 'View project';
+    return null;
+  }
+
+  function show(state) {
+    [dot, ring, label].forEach(function (n) { n.classList.toggle('cur--hide', !state); });
+  }
+
+  document.addEventListener('mousemove', function (e) {
+    mx = e.clientX; my = e.clientY;
+    if (!seen) { seen = true; rx = mx; ry = my; show(true); }
+
+    var txt = labelFor(e.target);
+    body.classList.toggle('cur-hot', !!txt);
+    label.textContent = txt || '';
+
+    // Native caret is clearer inside form fields — hide ours there.
+    var inField = !!e.target.closest('input, textarea');
+    dot.classList.toggle('cur--hide', inField);
+    ring.classList.toggle('cur--hide', inField);
+  }, { passive: true });
+
+  document.addEventListener('mousedown', function () { body.classList.add('cur-down'); });
+  document.addEventListener('mouseup', function () { body.classList.remove('cur-down'); });
+  document.addEventListener('mouseleave', function () { show(false); });
+  document.addEventListener('mouseenter', function () { show(true); });
+
+  (function frame() {
+    var k = reduce ? 1 : 0.19;
+    rx += (mx - rx) * k;
+    ry += (my - ry) * k;
+    dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
+    label.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+    window.requestAnimationFrame(frame);
+  })();
+})();
