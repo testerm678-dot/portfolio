@@ -282,84 +282,58 @@
 })();
 
 /* =====================================================================
-   Custom cursor — inspector reticle.
-   Dot tracks the pointer exactly; the ring eases behind it; the label
-   names whatever action sits under the pointer. Self-contained so it
-   can be removed by deleting this block plus its CSS and the three
-   #cur* divs in index.html.
+   Cursor glow + hover highlight.
+   The native cursor is left alone — hiding it costs the visitor the
+   pointer hand and text caret they rely on. Instead a soft light
+   trails the pointer and the component underneath warms up.
+   Removable by deleting this block, its CSS section, and the
+   .cursor-glow div in index.html.
    ===================================================================== */
 (function () {
   'use strict';
+
+  var glow = document.querySelector('.cursor-glow');
+  if (!glow) return;
   if (!window.matchMedia('(pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var dot = document.getElementById('curDot');
-  var ring = document.getElementById('curRing');
-  var label = document.getElementById('curLabel');
-  if (!dot || !ring || !label) return;
+  // Components that may take the highlight — everything here is a block
+  // with its own border/background, so a shadow sits correctly on it.
+  var HOVERABLE = '.pcard, .card, .tl__card, .cinfo, .btn, .filter, .chip, .stack__group, .process li, .facts li, .icon-btn, .hero__social a';
 
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var body = document.body;
-  body.classList.add('cur-on');
-
   var mx = window.innerWidth / 2, my = window.innerHeight / 2;
-  var rx = mx, ry = my, seen = false;
-
-  function labelFor(el) {
-    if (el.closest('input, textarea')) return 'Type';
-
-    var a = el.closest('a[href]');
-    if (a) {
-      var h = a.getAttribute('href') || '';
-      if (h.indexOf('mailto:') === 0) return 'Compose';
-      if (h.indexOf('tel:') === 0) return 'Call';
-      if (a.hasAttribute('download')) return 'Download';
-      if (a.target === '_blank') return 'Open ↗';
-      if (a.classList.contains('stretch')) return 'View project';
-      return 'Go';
-    }
-
-    var b = el.closest('button');
-    if (b) {
-      if (b.classList.contains('filter')) return 'Filter';
-      if (b.id === 'themeToggle') return 'Theme';
-      if (b.type === 'submit') return 'Send';
-      return 'Select';
-    }
-
-    if (el.closest('.pcard')) return 'View project';
-    return null;
-  }
-
-  function show(state) {
-    [dot, ring, label].forEach(function (n) { n.classList.toggle('cur--hide', !state); });
-  }
+  var gx = mx, gy = my, seen = false, current = null;
 
   document.addEventListener('mousemove', function (e) {
     mx = e.clientX; my = e.clientY;
-    if (!seen) { seen = true; rx = mx; ry = my; show(true); }
+    if (!seen) { seen = true; gx = mx; gy = my; body.classList.add('glow-on'); }
 
-    var txt = labelFor(e.target);
-    body.classList.toggle('cur-hot', !!txt);
-    label.textContent = txt || '';
-
-    // Native caret is clearer inside form fields — hide ours there.
-    var inField = !!e.target.closest('input, textarea');
-    dot.classList.toggle('cur--hide', inField);
-    ring.classList.toggle('cur--hide', inField);
+    var hit = e.target.closest ? e.target.closest(HOVERABLE) : null;
+    if (hit !== current) {
+      if (current) current.classList.remove('is-hovered');
+      if (hit) hit.classList.add('is-hovered');
+      current = hit;
+      body.classList.toggle('glow-hot', !!hit);
+    }
   }, { passive: true });
 
-  document.addEventListener('mousedown', function () { body.classList.add('cur-down'); });
-  document.addEventListener('mouseup', function () { body.classList.remove('cur-down'); });
-  document.addEventListener('mouseleave', function () { show(false); });
-  document.addEventListener('mouseenter', function () { show(true); });
+  document.addEventListener('mouseleave', function () {
+    body.classList.remove('glow-on', 'glow-hot');
+    if (current) { current.classList.remove('is-hovered'); current = null; }
+  });
+  document.addEventListener('mouseenter', function () { body.classList.add('glow-on'); });
+
+  // Never leave a highlight stuck behind after a click navigates or filters.
+  document.addEventListener('click', function () {
+    if (current) { current.classList.remove('is-hovered'); current = null; }
+    body.classList.remove('glow-hot');
+  });
 
   (function frame() {
-    var k = reduce ? 1 : 0.19;
-    rx += (mx - rx) * k;
-    ry += (my - ry) * k;
-    dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
-    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
-    label.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+    gx += (mx - gx) * 0.12;
+    gy += (my - gy) * 0.12;
+    glow.style.transform = 'translate3d(' + gx + 'px,' + gy + 'px,0)';
     window.requestAnimationFrame(frame);
   })();
 })();

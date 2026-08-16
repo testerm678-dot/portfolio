@@ -596,53 +596,44 @@ strong { color: var(--text); font-weight: 650; }
   .section { padding: 20px 0; page-break-inside: avoid; }
 }
 
-/* ---------- Custom cursor (inspector reticle) ----------
-   Fine pointers only. Touch devices and text fields keep native behaviour. */
-@media (pointer: fine) {
-  body.cur-on,
-  body.cur-on * { cursor: none; }
-  body.cur-on input,
-  body.cur-on textarea { cursor: text; }
-}
+/* ---------- Cursor glow + hover highlight ----------
+   The native cursor stays visible — familiar affordances (pointer hand,
+   text caret) are worth keeping. A soft light follows it, and whatever
+   is under it warms up. Fine pointers only. */
 
-.cur { position: fixed; top: 0; left: 0; z-index: 300; pointer-events: none; will-change: transform; }
-.cur--hide { opacity: 0; }
+.cursor-glow {
+  position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none;
+  width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%;
+  opacity: 0; will-change: transform, opacity;
+  transition: opacity .5s ease, width .45s ease, height .45s ease, margin .45s ease;
+  background: radial-gradient(circle closest-side,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    color-mix(in srgb, var(--accent-2) 9%, transparent) 55%,
+    transparent 78%);
+  filter: blur(14px);
+}
+body.glow-on .cursor-glow { opacity: .55; }
+body.glow-hot .cursor-glow {
+  width: 460px; height: 460px; margin: -230px 0 0 -230px; opacity: .8;
+}
+[data-theme="light"] .cursor-glow { filter: blur(20px); }
+[data-theme="light"] body.glow-on .cursor-glow { opacity: .40; }
 
-#curDot {
-  width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%;
-  background: var(--accent); transition: opacity .2s ease, background .2s ease, transform .1s linear;
+/* Whatever the pointer is over lifts and warms. Applied by JS to a
+   short list of components so nothing inline gets a stray shadow. */
+.is-hovered {
+  background-color: color-mix(in srgb, var(--accent) 7%, transparent) !important;
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent) !important;
+  box-shadow: 0 14px 40px -18px color-mix(in srgb, var(--accent) 70%, transparent),
+              0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+  transition: background-color .28s ease, border-color .28s ease, box-shadow .28s ease;
 }
-#curRing {
-  width: 32px; height: 32px; margin: -16px 0 0 -16px;
-  border: 1.5px solid var(--border-strong); border-radius: 50%;
-  transition: width .22s ease, height .22s ease, margin .22s ease,
-              border-color .22s ease, background .22s ease, opacity .2s ease;
-}
-#curRing::before, #curRing::after {
-  content: ""; position: absolute; left: 50%; width: 1.5px; height: 5px;
-  margin-left: -.75px; background: var(--border-strong); transition: background .22s ease;
-}
-#curRing::before { top: -7px; }
-#curRing::after  { bottom: -7px; }
-
-body.cur-hot #curRing {
-  width: 52px; height: 52px; margin: -26px 0 0 -26px;
-  border-color: var(--accent); background: var(--accent-soft);
-}
-body.cur-hot #curRing::before, body.cur-hot #curRing::after { background: var(--accent); }
-body.cur-hot #curDot { background: var(--accent-2); }
-body.cur-down #curRing { width: 24px; height: 24px; margin: -12px 0 0 -12px; border-color: var(--accent-2); }
-
-#curLabel {
-  margin: 20px 0 0 20px; white-space: nowrap;
-  font-family: var(--ff-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--accent); background: var(--surface-2);
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-  padding: 4px 9px; border-radius: 999px; backdrop-filter: blur(6px);
-  opacity: 0; transform-origin: 0 0; transition: opacity .18s ease;
-}
-body.cur-hot #curLabel { opacity: 1; }
+.pcard.is-hovered, .card.is-hovered, .tl__card.is-hovered { transform: translateY(-5px); }
+.cinfo.is-hovered { transform: translateX(5px); }
 
 @media (prefers-reduced-motion: reduce) {
-  #curRing { transition: none; }
+  .cursor-glow { display: none; }
+}
+@media (pointer: coarse), (max-width: 860px) {
+  .cursor-glow { display: none; }
 }
