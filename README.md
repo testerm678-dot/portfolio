@@ -1,13 +1,31 @@
 # Tuhin Hossain — Software QA Engineer · Portfolio
 
-A fast, responsive, single-page portfolio site. Pure HTML/CSS/JavaScript — **no build step, no dependencies**, so it can be hosted anywhere for free.
+Live: **https://tuhin-hossain.vercel.app**
+
+## TQMS — the concept
+
+The portfolio is built as **TQMS (Tuhin Quality Management System)** — a test management
+application rather than a scrolling page. It boots, then presents seven modules inside an
+app shell with a left rail, title bar and live status bar.
+
+| Module | What it holds |
+|---|---|
+| Dashboard | KPI tiles + a regression run that types itself out |
+| Test Suites | Skills as expandable suites with pass bars |
+| Systems Under Test | 10 projects as a table; a row opens a detail drawer |
+| Triage Reference | The S1–S4 severity ladder and defect-report standard |
+| Release History | Career as versioned releases |
+| Toolchain | Tools tagged CORE / PATTERN / CLOUD |
+| Contact | Direct links |
+
+Pure HTML/CSS/JavaScript — **no build step, no dependencies** — so it hosts anywhere for free.
 
 ```
 Portfolio/
-├── index.html                 # all content lives here
+├── index.html                 # app shell + all seven module views
 ├── assets/
-│   ├── css/styles.css         # design tokens + all styling (light & dark themes)
-│   ├── js/main.js             # nav, theme, reveal, counters, filters, terminal, form
+│   ├── css/styles.css         # design tokens + all styling
+│   ├── js/main.js             # boot, routing, drawer, palette, cursor, project data
 │   ├── img/tuhin.jpg          # profile photo (extracted from the CV)
 │   ├── img/favicon.svg        # tab icon
 │   └── docs/                  # downloadable CV PDFs
@@ -19,7 +37,7 @@ Portfolio/
 
 ## Run it locally
 
-Double-click `index.html`, or serve it (recommended, so paths behave exactly like production):
+Serve it (recommended, so paths behave exactly like production):
 
 ```bash
 npx serve .
@@ -28,29 +46,16 @@ npx serve .
 
 ---
 
-## Publish it (pick one — all free)
+## Deploying
 
-### Option A — GitHub Pages (recommended, gives `tuhingits.github.io`)
-1. Create a repo named **`Tuhingits.github.io`** on GitHub.
-2. Push this folder:
-   ```bash
-   git init
-   git add .
-   git commit -m "Portfolio site"
-   git branch -M main
-   git remote add origin https://github.com/Tuhingits/Tuhingits.github.io.git
-   git push -u origin main
-   ```
-3. Repo → **Settings → Pages → Source: `main` / root**. Live in ~1 minute at
-   `https://tuhingits.github.io`.
+Already connected: **GitHub `testerm678-dot/portfolio` → Vercel**.
+Every push to `main` auto-deploys to https://tuhin-hossain.vercel.app in about 30 seconds.
 
-### Option B — Netlify (drag & drop)
-Go to [app.netlify.com/drop](https://app.netlify.com/drop) and drag this whole folder in. Instant URL; rename it in Site settings.
-
-### Option C — Vercel
-`npx vercel` in this folder, accept the defaults.
-
-**After publishing:** put the live URL in the LinkedIn *Website* field, in the CV header, and in the email signature.
+```bash
+git add -A
+git commit -m "Describe the change"
+git push
+```
 
 ---
 
@@ -58,64 +63,61 @@ Go to [app.netlify.com/drop](https://app.netlify.com/drop) and drag this whole f
 
 | What | Where |
 |---|---|
-| Live site URL (for SEO/schema) | `index.html` → JSON-LD `"url"`, and `sitemap.xml` |
-| Profile photo | replace `assets/img/tuhin.jpg` (square crop, 600×600 or larger looks best) |
-| CV file | replace the PDF in `assets/docs/` (keep the same filename, or update the link in the hero) |
-| Availability badge | `index.html` → the `.badge` line in the hero |
+| Projects | `assets/js/main.js` → the `SYS` array (see below) |
+| KPI numbers | `index.html` → the `.kpis` block on the Dashboard |
+| Availability | `index.html` → sidebar footer, status bar, and the Contact module |
+| Profile photo | replace `assets/img/tuhin.jpg` (square crop, 600×600 or larger) |
+| CV file | replace the PDF in `assets/docs/` (keep the filename, or update the links to it) |
+| Live URL for SEO | `index.html` → canonical, Open Graph and JSON-LD; plus `sitemap.xml` |
 
-### Linking a project card
+### Adding a project
 
-Every project card is **clickable as a whole** — the title carries an invisible overlay that
-covers the card, so clicking anywhere on it opens the live site in a new tab.
+Projects are **data, not markup**. Add an entry to the `SYS` array near the top of
+`assets/js/main.js` and both the table row and its detail drawer are generated for you:
 
-All 10 cards are linked. When you add a **new** project card, give its title the same shape:
-
-```html
-<h3><a class="stretch" href="https://YOUR-URL-HERE" target="_blank" rel="noopener">Project Name <span class="ext" aria-hidden="true">↗</span></a></h3>
+```js
+{id:'SUT-11', nm:'Project Name',
+ desc:'One or two lines on the system and what you owned.',
+ plat:'Web · Android', scale:'2,000 users', cls:'Client', t:'t-cli',
+ url:'https://example.com/',
+ role:['What you tested','Another responsibility']}
 ```
 
-and add a visible link row just before the card's closing `</article>`:
+Class tags: `t-live` (green, shipped and running), `t-mvp` (amber, MVP stage),
+`t-cli` (blue, client delivery), `t-src` (purple, links to source code).
 
-```html
-<div class="pcard__links"><a href="https://YOUR-URL-HERE" target="_blank" rel="noopener">Live site ↗</a></div>
-```
+### Editing the boot sequence or run log
 
-Set the card's `data-cat` to `product`, `client` or `practice` so the filter buttons pick it up.
-
----
-
-## Making the contact form send real email
-
-Right now the form validates input and opens the visitor's mail client (`mailto:`) — it works everywhere with zero setup, but some visitors have no mail client configured. To receive submissions directly:
-
-1. Sign up at [formspree.io](https://formspree.io) (free tier) and copy the form endpoint.
-2. In `index.html`, change:
-   ```html
-   <form class="contact__form" id="contactForm" novalidate>
-   ```
-   to
-   ```html
-   <form class="contact__form" id="contactForm" action="https://formspree.io/f/XXXXXXX" method="POST">
-   ```
-3. In `assets/js/main.js`, delete the `e.preventDefault();` line inside the submit handler (keep the validation block above it, so invalid submissions still get caught).
+Both are arrays in `assets/js/main.js` — `BOOT` and `LOG`. Keep the inline
+`<span class="p">` / `f` / `d` / `b` / `w` classes for pass, fail, dim, blue and warn colours.
 
 ---
 
 ## Features built in
 
-- **Dark / light theme** with system-preference detection and `localStorage` persistence
-- **Fully responsive** — 5-column stats down to a single-column mobile layout
-- **Animated hero terminal** that "runs" a regression suite, typed line by line
-- **Animated stat counters** that fire when scrolled into view
-- **Filterable project grid** — SaaS products / client work / automation repos
-- **Scroll-spy navigation**, scroll progress bar, back-to-top button
-- **Accessibility** — skip link, focus-visible rings, ARIA on nav/tabs/status, `prefers-reduced-motion` support
-- **SEO** — meta description, Open Graph + Twitter cards, JSON-LD `Person` schema, sitemap, robots.txt
-- **Print stylesheet** — the page prints cleanly as a summary sheet
+- **Boot sequence** on load, replayable any time from the title bar
+- **Seven modules**, no page reloads; deep-linkable via `#dashboard`, `#systems`, `#triage`, …
+- **Command palette** — Ctrl/Cmd+K, arrow keys to move, Enter to jump, Escape to close
+- **Detail drawer** — click any system row for platform, scale and your role on it
+- **Custom inspector cursor** — reticle with a lagging ring and a live readout naming the
+  action under the pointer (Inspect / Open / Compose / Download / Type)
+- **Motion on every module entry** — counters count up, pass bars fill, rows cascade in
+- **Live status bar** — Dhaka clock, heartbeat pulse, "last run" timer
+- **Accessibility** — ARIA tabs, keyboard navigation, native caret preserved inside form
+  fields, and full `prefers-reduced-motion` support (boot, typing, cursor lag and stagger
+  all disable together)
+- **SEO** — meta description, canonical, Open Graph + Twitter cards, JSON-LD `Person`
+  schema, sitemap and robots.txt
+- **Touch devices** keep native cursor behaviour; the rail collapses to a scrollable top bar
 
 ---
 
 ## Notes
 
-- Privacy: referees' names, emails and phone numbers from the CV are **deliberately not published** on the site — it shows "references available on request" instead. Publishing them exposes their personal contact details to scrapers.
-- The site uses Google Fonts (Sora, Inter, JetBrains Mono). If offline or blocked, it falls back to system fonts and still looks correct.
+- **Privacy:** referees' names, emails and phone numbers from the CV are deliberately **not**
+  published — the Contact module says "Senior QA — on request" instead. Publishing them would
+  expose their personal contact details to scrapers.
+- The site uses Google Fonts (Inter, JetBrains Mono). If offline or blocked, it falls back to
+  system fonts and still reads correctly.
+- **Triage Reference** was written from standard QA practice and the CV. Read it and adjust the
+  wording so it matches how you actually triage — it should be your process, in your words.
