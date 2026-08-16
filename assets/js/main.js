@@ -309,6 +309,10 @@
   var gx = mx, gy = my, rx = mx, ry = my;
   var seen = false, current = null;
 
+  // Bug scale is eased in JS because the dot's transform is set inline
+  // each frame — a CSS transform would be overwritten by it.
+  var scale = 1, scaleTo = 1, tilt = 0, tiltTo = 0, lastX = mx;
+
   function show(on) {
     body.classList.toggle('glow-on', on);
     ring.classList.toggle('cur--hide', !on);
@@ -326,7 +330,12 @@
       current = hit;
       body.classList.toggle('glow-hot', !!hit);
       body.classList.toggle('cur-hot', !!hit);
+      scaleTo = hit ? 1.28 : 1;
     }
+
+    // the bug leans the way it is travelling
+    tiltTo = Math.max(-14, Math.min(14, (mx - lastX) * 1.4));
+    lastX = mx;
 
     // Native caret is clearer inside form fields — hide ours there.
     var inField = !!(e.target.closest && e.target.closest('input, textarea'));
@@ -334,8 +343,11 @@
     dot.classList.toggle('cur--hide', inField);
   }, { passive: true });
 
-  document.addEventListener('mousedown', function () { body.classList.add('cur-down'); });
-  document.addEventListener('mouseup', function () { body.classList.remove('cur-down'); });
+  document.addEventListener('mousedown', function () { body.classList.add('cur-down'); scaleTo = 0.82; });
+  document.addEventListener('mouseup', function () {
+    body.classList.remove('cur-down');
+    scaleTo = current ? 1.28 : 1;
+  });
   document.addEventListener('mouseleave', function () {
     show(false);
     body.classList.remove('glow-hot', 'cur-hot');
@@ -354,9 +366,14 @@
     gy += (my - gy) * 0.10;
     rx += (mx - rx) * 0.22;   // ring follows more closely
     ry += (my - ry) * 0.22;
+    scale += (scaleTo - scale) * 0.18;
+    tilt  += (tiltTo - tilt) * 0.12;
+    tiltTo *= 0.88;   // settle back upright when the pointer stops
+
     glow.style.transform = 'translate3d(' + gx + 'px,' + gy + 'px,0)';
     ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
-    dot.style.transform  = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+    dot.style.transform  = 'translate3d(' + mx + 'px,' + my + 'px,0) rotate(' +
+                           tilt.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
     window.requestAnimationFrame(frame);
   })();
 })();

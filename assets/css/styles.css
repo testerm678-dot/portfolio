@@ -631,12 +631,18 @@ body.glow-hot .cursor-glow { width: 760px; height: 760px; margin: -380px 0 0 -38
 .cur { position: fixed; top: 0; left: 0; z-index: 300; pointer-events: none; will-change: transform; }
 .cur--hide { opacity: 0 !important; }
 
+/* the pointer itself is a bug — the thing a QA engineer is always hunting */
 #curDot {
-  width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--gold) 85%, transparent),
-              0 0 26px color-mix(in srgb, var(--gold-2) 55%, transparent);
-  transition: width .2s ease, height .2s ease, margin .2s ease, opacity .2s ease;
+  width: 30px; height: 30px; margin: -15px 0 0 -15px;
+  background: url("../img/bug.png") center / contain no-repeat;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--gold) 85%, transparent))
+          drop-shadow(0 3px 7px rgba(0, 0, 0, .55));
+  transition: opacity .2s ease, filter .25s ease;
+}
+body.cur-hot #curDot {
+  filter: drop-shadow(0 0 12px var(--gold))
+          drop-shadow(0 0 24px color-mix(in srgb, var(--gold-2) 70%, transparent))
+          drop-shadow(0 3px 7px rgba(0, 0, 0, .55));
 }
 #curRing {
   width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
@@ -653,7 +659,6 @@ body.cur-hot #curRing {
   border-color: var(--gold);
   background: color-mix(in srgb, var(--gold) 15%, transparent);
 }
-body.cur-hot #curDot { width: 6px; height: 6px; margin: -3px 0 0 -3px; }
 body.cur-down #curRing { width: 30px; height: 30px; margin: -15px 0 0 -15px; }
 
 /* hovered components warm up */
