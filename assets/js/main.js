@@ -324,23 +324,24 @@
   }
 
   /* ---------------- Contact form ----------------
-     Posts to Web3Forms, which forwards the message straight to MAIL_TO — the
-     visitor never leaves the page and no mail client is involved.
+     Posts to Formspree, which keeps every submission in a dashboard as well as
+     emailing it on. The dashboard is the point: if a notification email is ever
+     filtered, bounced or sent to the wrong mailbox, the message is still there
+     to read — a recruiter's message can never silently vanish.
 
-     The access key is a publishable Web3Forms key — it is designed to sit in
-     client-side code and only ever routes mail to the address it is bound to.
-     Replace it from the Web3Forms dashboard if it ever needs rotating; if the
-     value is not a valid key the form falls back to opening the visitor's mail
+     SETUP (once): sign up at https://formspree.io using the mailbox you
+     actually read, create a form, and paste its endpoint below. Until a valid
+     endpoint is in place the form falls back to opening the visitor's mail
      client, so it never claims a message was sent when it was not. */
-  var ACCESS_KEY = 'd4603986-a5fa-4d37-ac8a-1fa71a76b692';
-  var ENDPOINT   = 'https://api.web3forms.com/submit';
-  var MAIL_TO    = 'tuhinhossain212209@gmail.com';
+  var ENDPOINT     = 'https://formspree.io/f/PASTE-YOUR-FORM-ID';
+  var MAIL_TO      = 'tuhinhossain212209@gmail.com';
   var SEND_TIMEOUT = 15000;
 
-  // Web3Forms keys are UUIDs; this shape check stops the placeholder ever
-  // being posted as if it were real.
-  var hasKey = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ACCESS_KEY);
-  var canPost = hasKey && typeof window.fetch === 'function';
+  // Shape check on the endpoint. Formspree form IDs are alphanumeric, so the
+  // hyphens in the placeholder above make it fail here — it can never be
+  // posted to as though it were a real form.
+  var hasEndpoint = /^https:\/\/formspree\.io\/f\/[A-Za-z0-9]{6,}$/.test(ENDPOINT);
+  var canPost = hasEndpoint && typeof window.fetch === 'function';
 
   var form = $('#contactForm');
   var status = $('#formStatus');
@@ -408,12 +409,9 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          access_key: ACCESS_KEY,
-          subject: subject,
-          from_name: 'Portfolio contact form',
           name: name,
-          email: email,
-          replyto: email,           // replying to the notification reaches the visitor
+          email: email,             // Formspree uses this as the reply-to address
+          _subject: subject,
           message: message
         }),
         signal: controller ? controller.signal : undefined
@@ -422,8 +420,9 @@
           return res.json()
             .catch(function () { return {}; })
             .then(function (data) {
-              if (!res.ok || data.success === false) {
-                throw new Error(data.message || ('HTTP ' + res.status));
+              if (!res.ok) {
+                var errs = data.errors;
+                throw new Error(errs && errs.length ? errs[0].message : ('HTTP ' + res.status));
               }
             });
         })
