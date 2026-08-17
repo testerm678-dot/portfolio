@@ -227,18 +227,147 @@
     typeTerminal();
   }
 
+  /* ---------------- Toasts ----------------
+     Each toast announces itself (role=status / role=alert), so the wrapper is
+     deliberately not a live region — that would double up the announcement.
+     #formStatus stays the live region for field validation only; the two never
+     fire at the same time.                                               */
+  var toastWrap = $('#toastWrap');
+  var MAX_TOASTS = 3;
+
+  var SVG = {
+    ok:    '<path d="M20 6 9 17l-5-5"/>',
+    err:   '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+    info:  '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2.5 7.5 9.5 6.5 9.5-6.5"/>',
+    close: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>'
+  };
+
+  function icon(path, size) {
+    return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="none" stroke="currentColor" ' +
+           'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>';
+  }
+
+  /* opts: { kind: 'ok'|'err'|'info', title, message, link: {href, text}, ttl } */
+  function toast(opts) {
+    if (!toastWrap) return;
+    var kind = opts.kind || 'info';
+    var ttl = opts.ttl || 6000;
+
+    while (toastWrap.children.length >= MAX_TOASTS) {
+      toastWrap.removeChild(toastWrap.firstChild);
+    }
+
+    var el = document.createElement('div');
+    el.className = 'toast toast--' + kind;
+    el.setAttribute('role', kind === 'err' ? 'alert' : 'status');
+    el.innerHTML =
+      '<span class="toast__ic">' + icon(SVG[kind], 18) + '</span>' +
+      '<div class="toast__body"><strong class="toast__title"></strong><p class="toast__msg"></p></div>' +
+      '<button class="toast__close" type="button" aria-label="Dismiss notification">' + icon(SVG.close, 14) + '</button>' +
+      '<span class="toast__bar"></span>';
+
+    // Titles and messages can carry a visitor's name, so they go in as text.
+    el.querySelector('.toast__title').textContent = opts.title || '';
+    var msg = el.querySelector('.toast__msg');
+    msg.textContent = opts.message || '';
+    if (opts.link) {
+      msg.appendChild(document.createTextNode(' '));
+      var a = document.createElement('a');
+      a.href = opts.link.href;
+      a.textContent = opts.link.text;
+      msg.appendChild(a);
+    }
+
+    var bar = el.querySelector('.toast__bar');
+    bar.style.animationDuration = ttl + 'ms';
+
+    var timer = null, remaining = ttl, startedAt = 0, closed = false;
+
+    function start() {
+      startedAt = Date.now();
+      timer = window.setTimeout(dismiss, remaining);
+      bar.style.animationPlayState = 'running';
+    }
+    function hold() {
+      if (timer === null) return;
+      window.clearTimeout(timer);
+      timer = null;
+      remaining -= (Date.now() - startedAt);
+      bar.style.animationPlayState = 'paused';
+    }
+    function resume() {
+      if (timer !== null || closed) return;
+      if (remaining < 1200) remaining = 1200;  // always leave time to read after a hover
+      start();
+    }
+    function dismiss() {
+      if (closed) return;
+      closed = true;
+      window.clearTimeout(timer);
+      el.classList.remove('is-in');
+      el.classList.add('is-out');
+      var remove = function () { if (el.parentNode) el.parentNode.removeChild(el); };
+      el.addEventListener('transitionend', remove, { once: true });
+      window.setTimeout(remove, 500);  // fallback if the transition never fires
+    }
+
+    el.querySelector('.toast__close').addEventListener('click', dismiss);
+    el.addEventListener('mouseenter', hold);
+    el.addEventListener('mouseleave', resume);
+    el.addEventListener('focusin', hold);
+    el.addEventListener('focusout', resume);
+
+    toastWrap.appendChild(el);
+    void el.offsetWidth;             // reflow, so the entry transition actually runs
+    el.classList.add('is-in');
+    start();
+  }
+
   /* ---------------- Contact form ----------------
-     No backend: composes a pre-filled email. To use a real endpoint,
-     see README (Formspree / Web3Forms swap is 2 lines).             */
+     Posts to Web3Forms, which forwards the message straight to MAIL_TO — the
+     visitor never leaves the page and no mail client is involved.
+
+     The access key is a publishable Web3Forms key — it is designed to sit in
+     client-side code and only ever routes mail to the address it is bound to.
+     Replace it from the Web3Forms dashboard if it ever needs rotating; if the
+     value is not a valid key the form falls back to opening the visitor's mail
+     client, so it never claims a message was sent when it was not. */
+  var ACCESS_KEY = 'd4603986-a5fa-4d37-ac8a-1fa71a76b692';
+  var ENDPOINT   = 'https://api.web3forms.com/submit';
+  var MAIL_TO    = 'tuhinhossain212209@gmail.com';
+  var SEND_TIMEOUT = 15000;
+
+  // Web3Forms keys are UUIDs; this shape check stops the placeholder ever
+  // being posted as if it were real.
+  var hasKey = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ACCESS_KEY);
+  var canPost = hasKey && typeof window.fetch === 'function';
+
   var form = $('#contactForm');
   var status = $('#formStatus');
-  var MAIL_TO = 'tuhinhossain212209@gmail.com';
+  var submitBtn = $('#cfSubmit');
+  var btnText = submitBtn ? submitBtn.querySelector('.btn__text') : null;
+  var sending = false;
+
+  function setBusy(on) {
+    sending = on;
+    if (form) form.classList.toggle('is-sending', on);
+    if (!submitBtn) return;
+    submitBtn.classList.toggle('is-busy', on);
+    submitBtn.disabled = on;
+    submitBtn.setAttribute('aria-busy', on ? 'true' : 'false');
+    if (btnText) btnText.textContent = on ? 'Sending…' : 'Send message';
+  }
+
+  function clearStatus() {
+    if (status) { status.textContent = ''; status.style.color = ''; }
+  }
 
   if (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var valid = true;
+      if (sending) return;
 
+      var valid = true;
       [['cf-name', function (v) { return v.trim().length > 1; }],
        ['cf-email', function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }],
        ['cf-message', function (v) { return v.trim().length > 9; }]
@@ -254,25 +383,97 @@
         if (status) { status.style.color = 'var(--fail)'; status.textContent = 'Please fix the highlighted fields.'; }
         return;
       }
+      clearStatus();
 
       var name = $('#cf-name').value.trim();
       var email = $('#cf-email').value.trim();
       var subject = $('#cf-subject').value.trim() || ('Portfolio enquiry from ' + name);
       var message = $('#cf-message').value.trim();
+      var trap = $('#cf-company');
 
-      var body = message + '\n\n—\n' + name + '\n' + email;
-      window.location.href = 'mailto:' + MAIL_TO +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body=' + encodeURIComponent(body);
-
-      if (status) {
-        status.style.color = 'var(--accent)';
-        status.textContent = 'Opening your email app… if nothing happens, write to ' + MAIL_TO;
+      // Honeypot filled means a bot. Show the same success it expects and drop it.
+      if (trap && trap.value) {
+        form.reset();
+        toast({ kind: 'ok', title: 'Message sent', message: 'Thanks — I will be in touch.' });
+        return;
       }
+
+      if (!canPost) { mailtoFallback(name, email, subject, message); return; }
+
+      setBusy(true);
+      var controller = window.AbortController ? new window.AbortController() : null;
+      var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, SEND_TIMEOUT);
+
+      window.fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          subject: subject,
+          from_name: 'Portfolio contact form',
+          name: name,
+          email: email,
+          replyto: email,           // replying to the notification reaches the visitor
+          message: message
+        }),
+        signal: controller ? controller.signal : undefined
+      })
+        .then(function (res) {
+          return res.json()
+            .catch(function () { return {}; })
+            .then(function (data) {
+              if (!res.ok || data.success === false) {
+                throw new Error(data.message || ('HTTP ' + res.status));
+              }
+            });
+        })
+        .then(function () {
+          form.reset();
+          $$('#contactForm .field').forEach(function (f) { f.classList.remove('is-invalid'); });
+          toast({
+            kind: 'ok',
+            title: 'Message sent',
+            message: 'Thanks ' + name.split(/\s+/)[0] + ' — it is in my inbox. I reply within 24 hours on working days.',
+            ttl: 7000
+          });
+        })
+        .catch(function (err) {
+          if (window.console && console.warn) console.warn('Contact form:', err);
+          toast({
+            kind: 'err',
+            title: 'That did not send',
+            message: 'Something went wrong on the way. Your message is still in the form — please try again, or email me at',
+            link: { href: 'mailto:' + MAIL_TO, text: MAIL_TO },
+            ttl: 12000
+          });
+        })
+        .then(function () {
+          window.clearTimeout(timeout);
+          setBusy(false);
+        });
     });
 
     $$('#contactForm input, #contactForm textarea').forEach(function (el) {
-      el.addEventListener('input', function () { el.closest('.field').classList.remove('is-invalid'); });
+      el.addEventListener('input', function () {
+        var field = el.closest('.field');
+        if (field) field.classList.remove('is-invalid');
+        if (status && status.textContent) clearStatus();
+      });
+    });
+  }
+
+  function mailtoFallback(name, email, subject, message) {
+    var body = message + '\n\n—\n' + name + '\n' + email;
+    window.location.href = 'mailto:' + MAIL_TO +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+
+    toast({
+      kind: 'info',
+      title: 'Opening your mail app',
+      message: 'Your message is drafted and ready to send. If nothing opened, write to',
+      link: { href: 'mailto:' + MAIL_TO, text: MAIL_TO },
+      ttl: 11000
     });
   }
 

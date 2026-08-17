@@ -183,6 +183,19 @@ strong { color: var(--text); font-weight: 650; }
 .btn--ghost { background: var(--surface); border-color: var(--border-strong); color: var(--text); }
 .btn--ghost:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
 
+/* Busy state: the icon swaps for a spinner so the button keeps its width. */
+.btn__spinner {
+  display: none; flex: none; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, currentColor 28%, transparent); border-top-color: currentColor;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn.is-busy { cursor: progress; opacity: .82; }
+.btn.is-busy:hover { transform: none; }
+.btn.is-busy .btn__icon { display: none; }
+.btn.is-busy .btn__spinner { display: block; }
+.btn[disabled] { pointer-events: none; }
+
 /* ---------- Hero ---------- */
 .hero { padding: 76px 0 40px; position: relative; }
 .hero__inner {
@@ -513,6 +526,58 @@ strong { color: var(--text); font-weight: 650; }
 .field.is-invalid input, .field.is-invalid textarea { border-color: var(--fail); }
 .field.is-invalid .err { display: block; }
 .form-status { margin: 0; font-size: 14px; color: var(--accent); min-height: 20px; }
+.contact__form.is-sending .field input, .contact__form.is-sending .field textarea { opacity: .6; }
+
+/* Honeypot — kept off-screen rather than display:none, which more bots skip. */
+.hp { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- Toasts ----------
+   Bottom-right stack, clear of the back-to-top button. Auto-dismiss is paused
+   while the pointer or keyboard focus is on a toast, so a fallback address is
+   never pulled away mid-read. */
+.toast-wrap {
+  position: fixed; right: 24px; bottom: 84px; z-index: 120;
+  width: min(370px, calc(100vw - 48px));
+  display: grid; gap: 12px; pointer-events: none;
+}
+.toast {
+  position: relative; overflow: hidden; pointer-events: auto;
+  display: flex; align-items: flex-start; gap: 13px;
+  padding: 15px 15px 16px; border-radius: var(--r);
+  background: var(--bg-2); border: 1px solid var(--border-strong); border-left-width: 3px;
+  box-shadow: var(--shadow);
+  opacity: 0; transform: translateY(16px) scale(.97);
+  transition: opacity .3s cubic-bezier(.2,.7,.3,1), transform .3s cubic-bezier(.2,.7,.3,1);
+}
+.toast.is-in  { opacity: 1; transform: none; }
+.toast.is-out { opacity: 0; transform: translateY(8px) scale(.97); }
+.toast--ok   { border-left-color: var(--accent); }
+.toast--err  { border-left-color: var(--fail); }
+.toast--info { border-left-color: var(--accent-2); }
+.toast__ic { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; }
+.toast--ok   .toast__ic { background: var(--accent-soft); color: var(--accent); }
+.toast--err  .toast__ic { background: color-mix(in srgb, var(--fail) 14%, transparent); color: var(--fail); }
+.toast--info .toast__ic { background: color-mix(in srgb, var(--accent-2) 14%, transparent); color: var(--accent-2); }
+.toast__body { flex: 1; min-width: 0; }
+.toast__title { display: block; font-family: var(--ff-head); font-size: 14.5px; font-weight: 700; }
+.toast__msg { margin: 3px 0 0; font-size: 13.4px; line-height: 1.65; color: var(--text-2); overflow-wrap: anywhere; }
+.toast__msg a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.toast__close {
+  flex: none; display: grid; place-items: center; width: 26px; height: 26px; margin: -2px -3px 0 0;
+  border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+.toast__close:hover { background: var(--surface-2); color: var(--text); }
+.toast__close:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.toast__bar {
+  position: absolute; left: 0; bottom: 0; height: 2px; width: 100%;
+  transform-origin: left; background: currentColor; opacity: .45;
+  animation: toastbar linear forwards;
+}
+.toast--ok   .toast__bar { color: var(--accent); }
+.toast--err  .toast__bar { color: var(--fail); }
+.toast--info .toast__bar { color: var(--accent-2); }
+@keyframes toastbar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
 /* ---------- Footer ---------- */
 .footer { border-top: 1px solid var(--border); padding: 28px 0; background: color-mix(in srgb, var(--bg-2) 55%, transparent); }
@@ -581,17 +646,23 @@ strong { color: var(--text); font-weight: 650; }
   .timeline { padding-left: 26px; }
   .tl__dot { left: -26px; width: 14px; height: 14px; }
   .tl__card, .card, .pcard, .process li, .contact__form { padding: 22px 20px; }
+  .toast-wrap { left: 16px; right: 16px; bottom: 80px; width: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
+  /* The global animation override would collapse the countdown bar instantly,
+     so hide it — the JS dismiss timer is unaffected and still runs in full. */
+  .toast__bar { display: none; }
+  .toast { opacity: 1; transform: none; }
+  .toast.is-out { opacity: 0; }
 }
 
 /* ---------- Print ---------- */
 @media print {
-  .nav, .to-top, .scroll-progress, .bg-grid, .bg-glow, .contact__form, .hero__visual { display: none !important; }
+  .nav, .to-top, .toast-wrap, .scroll-progress, .bg-grid, .bg-glow, .contact__form, .hero__visual { display: none !important; }
   body { background: #fff; color: #000; }
   .section { padding: 20px 0; page-break-inside: avoid; }
 }

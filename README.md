@@ -84,20 +84,37 @@ Set the card's `data-cat` to `product`, `client` or `practice` so the filter but
 
 ---
 
-## Making the contact form send real email
+## The contact form
 
-Right now the form validates input and opens the visitor's mail client (`mailto:`) — it works everywhere with zero setup, but some visitors have no mail client configured. To receive submissions directly:
+Submissions POST to [Web3Forms](https://web3forms.com), which forwards each message
+straight to my inbox. The visitor never leaves the page and no mail client is involved.
 
-1. Sign up at [formspree.io](https://formspree.io) (free tier) and copy the form endpoint.
-2. In `index.html`, change:
-   ```html
-   <form class="contact__form" id="contactForm" novalidate>
-   ```
-   to
-   ```html
-   <form class="contact__form" id="contactForm" action="https://formspree.io/f/XXXXXXX" method="POST">
-   ```
-3. In `assets/js/main.js`, delete the `e.preventDefault();` line inside the submit handler (keep the validation block above it, so invalid submissions still get caught).
+What happens on submit:
+
+| Outcome | What the visitor sees |
+| --- | --- |
+| Invalid fields | Fields highlight, inline message under the button, focus jumps to the first problem |
+| Sending | Button disables, label reads "Sending…", spinner replaces the send icon |
+| Delivered | Green toast — "Message sent", greeted by first name; the form clears |
+| Endpoint or network failure | Red toast, the typed message is **left in the form**, plus a `mailto:` link as a fallback |
+| No valid key configured | Falls back to opening the visitor's mail client — it never claims a message was sent when it wasn't |
+
+Toasts stack (max 3), auto-dismiss on a countdown bar, and pause that countdown
+while hovered or keyboard-focused so a fallback address is never pulled away mid-read.
+
+**Rotating the key** — the access key in `assets/js/main.js` (`ACCESS_KEY`) is a
+*publishable* Web3Forms key: it is designed to sit in client-side code and only ever
+routes mail to the address it is bound to. To change it, grab a new one from
+[web3forms.com](https://web3forms.com) and replace that one line. Anything that isn't a
+valid UUID switches the form back to the `mailto:` fallback automatically.
+
+**Spam** — an off-screen honeypot field (`#cf-company`, `tabindex="-1"`,
+`aria-hidden`) catches naive bots; a filled honeypot is silently dropped without a
+network request while still showing the bot the success toast it expects. The free
+Web3Forms plan covers 250 submissions/month.
+
+> Note: Web3Forms rejects server-side calls on the free plan, so the form only works
+> from a browser — `curl` tests need an `Origin` header to succeed.
 
 ---
 
