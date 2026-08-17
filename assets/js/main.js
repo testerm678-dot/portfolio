@@ -339,7 +339,7 @@
      every message into a void while the API still answers success:true — that
      has happened here before. After changing the key, always send a real test
      submission and confirm it arrives; never trust the HTTP response alone. */
-  var ACCESS_KEY   = 'PASTE-YOUR-WEB3FORMS-ACCESS-KEY';
+  var ACCESS_KEY   = 'd4603986-a5fa-4d37-ac8a-1fa71a76b692';
   var ENDPOINT     = 'https://api.web3forms.com/submit';
   var MAIL_TO      = 'tuhinhossain212209@gmail.com';
   var SEND_TIMEOUT = 15000;
