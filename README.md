@@ -123,11 +123,34 @@ convention, so it is filtered server-side too; client-side, a filled honeypot is
 with no network request while still showing the bot the success toast it expects. The
 free plan covers 250 submissions/month.
 
-> **Verify delivery, not the response.** The free plan keeps no copy of submissions, so
-> the registered address is the only record. A key created against the wrong mailbox
-> sends every message into a void while the API still answers `success: true` — that
-> happened on this site. After changing the key, always send a real submission and
-> confirm it arrives.
+### The spreadsheet log
+
+Web3Forms' free plan keeps **no copy** of submissions, so on its own there is no way to
+answer "did that message actually arrive?" except by searching an inbox. To close that
+gap, each submission is also posted to a Google Apps Script web app that appends it to a
+spreadsheet.
+
+Both destinations are attempted at once, and the visitor sees **"Message sent" only if
+at least one of them accepted the message** — so a green toast always means the message
+exists somewhere. If one channel fails the other still carries it, and the browser
+console names the one that failed.
+
+To set it up, follow the instructions at the top of [`contact-form-sheet.gs`](contact-form-sheet.gs),
+then paste the deployed `/exec` URL into `SHEET_URL` in `assets/js/main.js`:
+
+```js
+var SHEET_URL = 'https://script.google.com/macros/s/AKfyc…/exec';
+```
+
+Leave it empty and the form simply emails only — no stray request is made. A malformed
+URL is rejected by a length check on the deployment id, so a half-pasted placeholder
+can never be treated as a live endpoint.
+
+> **Verify delivery, not the response.** A key created against the wrong mailbox sends
+> every message into a void while the API still answers `success: true` — that happened
+> on this site. After changing the key, always send a real submission and confirm it
+> arrives. Allow a few minutes: mail is not instant, and more than one "lost" message
+> here turned out to be merely in flight.
 
 > Note: Web3Forms rejects server-side calls on the free plan, so the form only works
 > from a browser — `curl` tests need an `Origin` header to succeed.

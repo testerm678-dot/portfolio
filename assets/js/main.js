@@ -344,10 +344,80 @@
   var MAIL_TO      = 'tuhinhossain212209@gmail.com';
   var SEND_TIMEOUT = 15000;
 
+  /* Second destination: a Google Apps Script web app that appends each
+     submission to a spreadsheet. Web3Forms keeps no copy, so without this there
+     is no way to answer "did that message arrive?" except by searching an inbox
+     — which is how a real submission once looked lost for hours. Paste the
+     deployed /exec URL here; leave it empty and the form simply emails only. */
+  var SHEET_URL    = '';
+
   // Web3Forms keys are UUIDs; the placeholder above cannot pass this, so it can
   // never be posted as though it were a real key.
-  var hasKey = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ACCESS_KEY);
+  var hasKey  = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ACCESS_KEY);
   var canPost = hasKey && typeof window.fetch === 'function';
+  // Real Apps Script deployment ids run ~57 characters; the length floor is what
+  // stops a half-pasted placeholder from being treated as a live endpoint.
+  var canLog  = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]{25,}\/exec$/.test(SHEET_URL) &&
+                typeof window.fetch === 'function';
+
+  // Turns a rejection into a resolved outcome, so one dead channel cannot stop
+  // the other from being awaited.
+  function reflect(channel, p) {
+    return p.then(
+      function ()    { return { channel: channel, ok: true }; },
+      function (err) { return { channel: channel, ok: false, error: err }; }
+    );
+  }
+
+  function withTimeout(run) {
+    var controller = window.AbortController ? new window.AbortController() : null;
+    var timer = window.setTimeout(function () { if (controller) controller.abort(); }, SEND_TIMEOUT);
+    return run(controller ? controller.signal : undefined)
+      .then(function (v) { window.clearTimeout(timer); return v; },
+            function (e) { window.clearTimeout(timer); throw e; });
+  }
+
+  function sendEmail(d) {
+    return withTimeout(function (signal) {
+      return window.fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          subject: d.subject,
+          from_name: 'Portfolio contact form',
+          name: d.name,
+          email: d.email,
+          replyto: d.email,       // replying to the notification reaches the visitor
+          message: d.message
+        }),
+        signal: signal
+      }).then(function (res) {
+        return res.json()
+          .catch(function () { return {}; })
+          .then(function (data) {
+            if (!res.ok || data.success === false) {
+              throw new Error(data.message || ('HTTP ' + res.status));
+            }
+          });
+      });
+    });
+  }
+
+  function sendToSheet(d) {
+    return withTimeout(function (signal) {
+      // text/plain keeps this a CORS "simple request", so Apps Script never has
+      // to answer a preflight it does not handle.
+      return window.fetch(SHEET_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(d),
+        signal: signal
+      }).then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+      });
+    });
+  }
 
   var form = $('#contactForm');
   var status = $('#formStatus');
@@ -405,47 +475,38 @@
         return;
       }
 
-      if (!canPost) { mailtoFallback(name, email, subject, message); return; }
+      if (!canPost && !canLog) { mailtoFallback(name, email, subject, message); return; }
 
       setBusy(true);
-      var controller = window.AbortController ? new window.AbortController() : null;
-      var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, SEND_TIMEOUT);
+      var payload = { name: name, email: email, subject: subject, message: message };
 
-      window.fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key: ACCESS_KEY,
-          subject: subject,
-          from_name: 'Portfolio contact form',
-          name: name,
-          email: email,
-          replyto: email,           // replying to the notification reaches the visitor
-          message: message
-        }),
-        signal: controller ? controller.signal : undefined
-      })
-        .then(function (res) {
-          return res.json()
-            .catch(function () { return {}; })
-            .then(function (data) {
-              if (!res.ok || data.success === false) {
-                throw new Error(data.message || ('HTTP ' + res.status));
-              }
-            });
-        })
-        .then(function () {
+      // Both destinations are attempted at once. The visitor is told the message
+      // was sent only if at least one of them actually accepted it, so a green
+      // toast always means the message exists somewhere.
+      var jobs = [];
+      if (canPost) jobs.push(reflect('email', sendEmail(payload)));
+      if (canLog)  jobs.push(reflect('sheet', sendToSheet(payload)));
+
+      Promise.all(jobs).then(function (results) {
+        var kept = results.filter(function (r) { return r.ok; });
+        var lost = results.filter(function (r) { return !r.ok; });
+
+        // A partial failure still means the message survived, but it should not
+        // pass silently — the surviving channel may be the one without email.
+        lost.forEach(function (r) {
+          if (window.console && console.warn) console.warn('Contact form: ' + r.channel + ' failed —', r.error);
+        });
+
+        if (kept.length) {
           form.reset();
           $$('#contactForm .field').forEach(function (f) { f.classList.remove('is-invalid'); });
           toast({
             kind: 'ok',
             title: 'Message sent',
-            message: 'Thanks ' + name.split(/\s+/)[0] + ' — it is in my inbox. I reply within 24 hours on working days.',
+            message: 'Thanks ' + name.split(/\s+/)[0] + ' — it has reached me. I reply within 24 hours on working days.',
             ttl: 7000
           });
-        })
-        .catch(function (err) {
-          if (window.console && console.warn) console.warn('Contact form:', err);
+        } else {
           toast({
             kind: 'err',
             title: 'That did not send',
@@ -453,11 +514,9 @@
             link: { href: 'mailto:' + MAIL_TO, text: MAIL_TO },
             ttl: 12000
           });
-        })
-        .then(function () {
-          window.clearTimeout(timeout);
-          setBusy(false);
-        });
+        }
+        setBusy(false);
+      });
     });
 
     $$('#contactForm input, #contactForm textarea').forEach(function (el) {
