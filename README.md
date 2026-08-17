@@ -86,10 +86,9 @@ Set the card's `data-cat` to `product`, `client` or `practice` so the filter but
 
 ## The contact form
 
-Submissions POST to [Formspree](https://formspree.io), which stores every message in a
-dashboard **and** emails it on. The visitor never leaves the page and no mail client is
-involved. The dashboard is the point: if a notification email is ever filtered, bounced
-or routed to the wrong mailbox, the message is still sitting there to be read.
+Submissions POST to [Web3Forms](https://web3forms.com), which forwards each message to
+the address its access key is registered to. The visitor never leaves the page and no
+mail client is involved.
 
 What happens on submit:
 
@@ -99,35 +98,39 @@ What happens on submit:
 | Sending | Button disables, label reads "Sending…", spinner replaces the send icon |
 | Delivered | Green toast — "Message sent", greeted by first name; the form clears |
 | Endpoint or network failure | Red toast, the typed message is **left in the form**, plus a `mailto:` link as a fallback |
-| No valid endpoint configured | Falls back to opening the visitor's mail client — it never claims a message was sent when it wasn't |
+| No valid key configured | Falls back to opening the visitor's mail client — it never claims a message was sent when it wasn't |
 
 Toasts stack (max 3), auto-dismiss on a countdown bar, and pause that countdown
 while hovered or keyboard-focused so a fallback address is never pulled away mid-read.
 
-**Setup / changing the destination** — sign up at [formspree.io](https://formspree.io)
-**using the mailbox you actually read**, create a form, and paste its endpoint into
-`ENDPOINT` in `assets/js/main.js`:
+**Setup / changing the destination** — go to [web3forms.com](https://web3forms.com),
+enter **the mailbox you actually read**, and they email back an access key. Paste it
+into `ACCESS_KEY` in `assets/js/main.js`:
 
 ```js
-var ENDPOINT = 'https://formspree.io/f/abcdwxyz';
+var ACCESS_KEY = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
 ```
 
-Anything that isn't a valid endpoint — including the shipped
-`.../f/PASTE-YOUR-FORM-ID` placeholder, whose hyphens deliberately fail the shape
-check — switches the form back to the `mailto:` fallback automatically, so the site
-can never show a success toast for a message that went nowhere.
+The key is publishable by design — it only ever routes mail to the address it was
+created with, so it is safe in client-side code. Anything that is not a valid UUID,
+including the shipped `PASTE-YOUR-WEB3FORMS-ACCESS-KEY` placeholder, switches the form
+back to the `mailto:` fallback automatically, so the site can never show a success
+toast for a message that went nowhere.
 
 **Spam** — an off-screen honeypot field (`#cf-company`, `tabindex="-1"`,
-`aria-hidden`) catches naive bots. It is named `_gotcha`, which is Formspree's own
-honeypot convention, so it is filtered server-side too; client-side, a filled honeypot
-is dropped with no network request while still showing the bot the success toast it
-expects. The Formspree free plan covers 50 submissions/month.
+`aria-hidden`) catches naive bots. It is named `botcheck`, Web3Forms' own honeypot
+convention, so it is filtered server-side too; client-side, a filled honeypot is dropped
+with no network request while still showing the bot the success toast it expects. The
+free plan covers 250 submissions/month.
 
-> **Lesson learned:** an earlier version used a Web3Forms key created with a different
-> email address. The API returned `success: true` and the site showed "Message sent",
-> but the mail went to a mailbox nobody read. A provider with a visible submissions log
-> makes that failure mode impossible to miss — always verify delivery end to end, not
-> just the HTTP response.
+> **Verify delivery, not the response.** The free plan keeps no copy of submissions, so
+> the registered address is the only record. A key created against the wrong mailbox
+> sends every message into a void while the API still answers `success: true` — that
+> happened on this site. After changing the key, always send a real submission and
+> confirm it arrives.
+
+> Note: Web3Forms rejects server-side calls on the free plan, so the form only works
+> from a browser — `curl` tests need an `Origin` header to succeed.
 
 ---
 
