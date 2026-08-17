@@ -482,98 +482,76 @@
 })();
 
 /* =====================================================================
-   Golden cursor + glow.
-   Dot tracks the pointer exactly, ring eases behind it, and a wide warm
-   light pools underneath. Components under the pointer warm up too.
-   Removable by deleting this block, its CSS section, and the
-   .cursor-glow / #curRing / #curDot divs in index.html.
+   Cursor effects.
+   The pointer itself is a native CSS cursor (see the cursor block in
+   styles.css), so it never lags. This adds the two moving parts:
+   a wide aurora that eases along behind it, and two ripples per click.
+   Removable by deleting this block and that CSS section.
    ===================================================================== */
 (function () {
   'use strict';
 
-  var glow = document.querySelector('.cursor-glow');
-  var ring = document.getElementById('curRing');
-  var dot  = document.getElementById('curDot');
-  if (!glow || !ring || !dot) return;
-  if (!window.matchMedia('(pointer: fine)').matches) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // Block-level components that may take the highlight, so nothing
-  // inline picks up a stray shadow.
-  var HOVERABLE = '.pcard, .card, .tl__card, .cinfo, .btn, .filter, .chip, .stack__group, .process li, .facts li, .icon-btn, .hero__social a';
-
   var body = document.body;
-  body.classList.add('cur-on');
 
-  var mx = window.innerWidth / 2, my = window.innerHeight / 2;
-  var gx = mx, gy = my, rx = mx, ry = my;
-  var seen = false, current = null;
+  var fx = document.createElement('div');
+  fx.className = 'cursor-fx';
+  fx.setAttribute('aria-hidden', 'true');
+  body.appendChild(fx);
 
-  // Bug scale is eased in JS because the dot's transform is set inline
-  // each frame — a CSS transform would be overwritten by it.
-  var scale = 1, scaleTo = 1, tilt = 0, tiltTo = 0, lastX = mx;
+  /* ---- aurora: only meaningful with a real pointer ---- */
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var aurora = document.createElement('div');
+    aurora.className = 'cursor-aurora';
+    aurora.setAttribute('aria-hidden', 'true');
+    body.appendChild(aurora);
 
-  function show(on) {
-    body.classList.toggle('glow-on', on);
-    ring.classList.toggle('cur--hide', !on);
-    dot.classList.toggle('cur--hide', !on);
-  }
+    var tx = window.innerWidth / 2, ty = window.innerHeight / 2;
+    var cx = tx, cy = ty, running = false, landed = false;
 
-  document.addEventListener('mousemove', function (e) {
-    mx = e.clientX; my = e.clientY;
-    if (!seen) { seen = true; gx = rx = mx; gy = ry = my; show(true); }
-
-    var hit = e.target.closest ? e.target.closest(HOVERABLE) : null;
-    if (hit !== current) {
-      if (current) current.classList.remove('is-hovered');
-      if (hit) hit.classList.add('is-hovered');
-      current = hit;
-      body.classList.toggle('glow-hot', !!hit);
-      body.classList.toggle('cur-hot', !!hit);
-      scaleTo = hit ? 1.28 : 1;
+    // The loop parks itself once the aurora has caught up, rather than
+    // burning a frame callback forever while the pointer sits still.
+    function follow() {
+      cx += (tx - cx) * 0.14;
+      cy += (ty - cy) * 0.14;
+      aurora.style.transform = 'translate3d(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px,0)';
+      if (Math.abs(tx - cx) > 0.4 || Math.abs(ty - cy) > 0.4) {
+        window.requestAnimationFrame(follow);
+      } else {
+        running = false;
+      }
     }
 
-    // the bug leans the way it is travelling
-    tiltTo = Math.max(-14, Math.min(14, (mx - lastX) * 1.4));
-    lastX = mx;
+    document.addEventListener('pointermove', function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!landed) {          // first move: land it there, don't sweep in from centre
+        landed = true;
+        cx = tx; cy = ty;
+        aurora.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)';
+        body.classList.add('aurora-on');
+      }
+      if (!running) { running = true; window.requestAnimationFrame(follow); }
+    }, { passive: true });
 
-    // Native caret is clearer inside form fields — hide ours there.
-    var inField = !!(e.target.closest && e.target.closest('input, textarea'));
-    ring.classList.toggle('cur--hide', inField);
-    dot.classList.toggle('cur--hide', inField);
+    document.addEventListener('mouseleave', function () { body.classList.remove('aurora-on'); });
+    document.addEventListener('mouseenter', function () { if (landed) body.classList.add('aurora-on'); });
+  }
+
+  /* ---- click ripples ---- */
+  function wave(x, y, cls) {
+    var r = document.createElement('span');
+    r.className = cls;
+    r.style.left = x + 'px';
+    r.style.top = y + 'px';
+    fx.appendChild(r);
+    var drop = function () { if (r.parentNode) r.parentNode.removeChild(r); };
+    r.addEventListener('animationend', drop);
+    window.setTimeout(drop, 2900);   // fallback if the animation never ends
+  }
+
+  document.addEventListener('pointerdown', function (e) {
+    wave(e.clientX, e.clientY, 'ripple');
+    wave(e.clientX, e.clientY, 'ripple ripple--slow');
   }, { passive: true });
-
-  document.addEventListener('mousedown', function () { body.classList.add('cur-down'); scaleTo = 0.82; });
-  document.addEventListener('mouseup', function () {
-    body.classList.remove('cur-down');
-    scaleTo = current ? 1.28 : 1;
-  });
-  document.addEventListener('mouseleave', function () {
-    show(false);
-    body.classList.remove('glow-hot', 'cur-hot');
-    if (current) { current.classList.remove('is-hovered'); current = null; }
-  });
-  document.addEventListener('mouseenter', function () { show(true); });
-
-  // Never leave a highlight stuck behind after a click navigates or filters.
-  document.addEventListener('click', function () {
-    if (current) { current.classList.remove('is-hovered'); current = null; }
-    body.classList.remove('glow-hot', 'cur-hot');
-  });
-
-  (function frame() {
-    gx += (mx - gx) * 0.10;   // glow trails furthest behind
-    gy += (my - gy) * 0.10;
-    rx += (mx - rx) * 0.22;   // ring follows more closely
-    ry += (my - ry) * 0.22;
-    scale += (scaleTo - scale) * 0.18;
-    tilt  += (tiltTo - tilt) * 0.12;
-    tiltTo *= 0.88;   // settle back upright when the pointer stops
-
-    glow.style.transform = 'translate3d(' + gx + 'px,' + gy + 'px,0)';
-    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
-    dot.style.transform  = 'translate3d(' + mx + 'px,' + my + 'px,0) rotate(' +
-                           tilt.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
-    window.requestAnimationFrame(frame);
-  })();
 })();

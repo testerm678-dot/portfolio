@@ -139,6 +139,10 @@ expects. The Formspree free plan covers 50 submissions/month.
 - **Animated stat counters** that fire when scrolled into view
 - **Filterable project grid** — SaaS products / client work / automation repos
 - **Scroll-spy navigation**, scroll progress bar, back-to-top button
+- **Custom cursor** — an SVG arrow (and pointing hand over anything clickable) set as a
+  native CSS cursor, so it has zero tracking lag; behind it a wide aurora eases along,
+  and every click pushes out two expanding ripples. Fine pointers only, and the whole
+  thing is skipped under `prefers-reduced-motion`
 - **Accessibility** — skip link, focus-visible rings, ARIA on nav/tabs/status, `prefers-reduced-motion` support
 - **SEO** — meta description, Open Graph + Twitter cards, JSON-LD `Person` schema, sitemap, robots.txt
 - **Print stylesheet** — the page prints cleanly as a summary sheet
