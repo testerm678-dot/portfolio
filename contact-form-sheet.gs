@@ -27,6 +27,7 @@
  */
 
 var SHEET_NAME = 'Messages';
+var VISITOR_SHEET_NAME = 'Visitors';
 
 function doPost(e) {
   var out = ContentService.createTextOutput();
@@ -48,11 +49,48 @@ function doPost(e) {
   return out.setMimeType(ContentService.MimeType.JSON);
 }
 
-/** Lets you open the /exec URL in a browser to confirm the deployment is live. */
-function doGet() {
+/** Counts one anonymous browser session and returns the current total. */
+function doGet(e) {
+  var sessionId = e && e.parameter ? String(e.parameter.session || '') : '';
+  if (sessionId.length < 16 || sessionId.length > 100) {
+    return respond_(e, { ok: true, service: 'portfolio contact log' });
+  }
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var sheet = getVisitorSheet_();
+    var ids = sheet.getRange(2, 1, Math.max(sheet.getLastRow() - 1, 1), 1)
+      .getValues().map(function (row) { return String(row[0]); });
+    if (ids.indexOf(sessionId) === -1) sheet.appendRow([sessionId, new Date()]);
+    return respond_(e, { ok: true, total: Math.max(sheet.getLastRow() - 1, 0) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function respond_(e, data) {
+  var callback = e && e.parameter ? String(e.parameter.callback || '') : '';
+  if (/^[A-Za-z_$][\w$]{0,63}$/.test(callback)) {
+    return ContentService
+      .createTextOutput(callback + '(' + JSON.stringify(data) + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
   return ContentService
-    .createTextOutput(JSON.stringify({ ok: true, service: 'portfolio contact log' }))
+    .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getVisitorSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(VISITOR_SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(VISITOR_SHEET_NAME);
+    sheet.appendRow(['Session ID', 'First seen']);
+    sheet.setFrozenRows(1);
+    sheet.getRange('A1:B1').setFontWeight('bold');
+  }
+  return sheet;
 }
 
 function getSheet_() {

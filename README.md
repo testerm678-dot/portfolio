@@ -146,6 +146,20 @@ Leave it empty and the form simply emails only — no stray request is made. A m
 URL is rejected by a length check on the deployment id, so a half-pasted placeholder
 can never be treated as a live endpoint.
 
+### The visitor counter
+
+The footer counter starts at `0` and becomes live when `SHEET_URL` is configured. On the
+first page load in a browser tab, the site creates a random anonymous
+session ID in `sessionStorage` and sends it to the same Apps Script web app. The script
+stores each new ID once in a `Visitors` sheet under a script lock, then returns the total.
+Reloads in the same tab do not create another visitor. No name, email, IP address or
+device information is stored. The read uses a validated JSONP callback because the
+static site and Apps Script deployment have different origins.
+
+After deploying the updated [`contact-form-sheet.gs`](contact-form-sheet.gs), use that
+deployment URL for `SHEET_URL` in `assets/js/main.js`. The first analytics request will
+create the `Visitors` sheet automatically.
+
 > **Verify delivery, not the response.** A key created against the wrong mailbox sends
 > every message into a void while the API still answers `success: true` — that happened
 > on this site. After changing the key, always send a real submission and confirm it

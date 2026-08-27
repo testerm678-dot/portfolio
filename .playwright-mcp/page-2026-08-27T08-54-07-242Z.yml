@@ -1,0 +1,685 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "Tuhin Hossain — home" [ref=e5]:
+        - /url: "#home"
+        - generic [ref=e9]: Tuhin.QA
+      - navigation "Primary" [ref=e10]:
+        - link "About" [ref=e11]:
+          - /url: "#about"
+        - link "Expertise" [ref=e12]:
+          - /url: "#expertise"
+        - link "Stack" [ref=e13]:
+          - /url: "#skills"
+        - link "Experience" [ref=e14]:
+          - /url: "#experience"
+        - link "Projects" [ref=e15]:
+          - /url: "#projects"
+        - link "Process" [ref=e16]:
+          - /url: "#process"
+        - link "Contact" [ref=e17]:
+          - /url: "#contact"
+      - generic [ref=e18]:
+        - button "Switch colour theme" [ref=e19]
+        - link "Contact me" [ref=e22]:
+          - /url: "#contact"
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - paragraph [ref=e27]: Open to new opportunities · Remote & relocation
+          - heading [level=1] [ref=e29]:
+            - text: Hi, I'm Tuhin Hossain I break software
+            - emphasis [ref=e30]: before
+            - text: your users do.
+          - paragraph [ref=e31]: "> Software QA Engineer · Manual · Automation · API · Performance"
+          - paragraph [ref=e32]:
+            - text: 4+ years of hands-on quality engineering across SaaS platforms, enterprise ERP and mobile apps. Today I'm the dedicated QA owner for a live pharmacy platform on
+            - strong [ref=e33]: web, Android and iOS
+            - text: and two SaaS MVPs — driving quality from requirement analysis all the way to release sign-off.
+          - generic [ref=e34]:
+            - link "View my work" [ref=e35]:
+              - /url: "#projects"
+            - link "Download CV" [ref=e38]:
+              - /url: assets/docs/Tuhin_Hossain_CV_4Y_E_SQA_Engineer.pdf
+          - list "Social links" [ref=e41]:
+            - listitem [ref=e42]:
+              - link "LinkedIn" [ref=e43]:
+                - /url: https://www.linkedin.com/in/tuhin-hossain-73a791157
+            - listitem [ref=e46]:
+              - link "GitHub" [ref=e47]:
+                - /url: https://github.com/Tuhingits
+            - listitem [ref=e50]:
+              - link "Email" [ref=e51]:
+                - /url: mailto:tuhinhossain212209@gmail.com
+            - listitem [ref=e55]:
+              - link "Phone" [ref=e56]:
+                - /url: tel:+8801714732823
+        - generic [ref=e59]:
+          - generic [ref=e60]: regression-suite — pytest + playwright
+          - generic [ref=e67]:
+            - generic [ref=e68]: Defect escape rate
+            - generic [ref=e69]: Low & falling
+          - generic [ref=e70]:
+            - generic [ref=e71]: Release sign-off
+            - generic [ref=e72]: Go / No-Go owner
+      - list [ref=e74]:
+        - listitem [ref=e75]:
+          - strong [ref=e76]: "0"
+          - text: Years in QA
+        - listitem [ref=e77]:
+          - strong [ref=e78]: "0"
+          - text: SaaS products owned
+        - listitem [ref=e79]:
+          - strong [ref=e80]: "0"
+          - text: Mobile installs tested
+        - listitem [ref=e81]:
+          - strong [ref=e82]: "0"
+          - text: Users served by my QA
+        - listitem [ref=e83]:
+          - strong [ref=e84]: "0"
+          - text: Products & projects
+    - generic [ref=e86]:
+      - generic [ref=e87]:
+        - generic [ref=e88]: 01 — About
+        - heading "Quality is not a phase. It's how I think." [level=2] [ref=e89]
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - img "Portrait of Tuhin Hossain, Software QA Engineer" [ref=e93]
+          - generic [ref=e94]: Dhaka, Bangladesh
+        - generic [ref=e98]:
+          - paragraph [ref=e99]:
+            - text: I'm a
+            - strong [ref=e100]: Software QA Engineer
+            - text: with four years spent ensuring that products used by real people every day behave exactly as specified. I work end-to-end across the
+            - strong [ref=e101]: SDLC and STLC
+            - text: — requirement analysis, test strategy, test case design, execution, defect life-cycle management and release sign-off — and I'm as ready to challenge an ambiguous acceptance criterion as I am to sign off a release candidate.
+          - paragraph [ref=e102]:
+            - text: I currently
+            - strong [ref=e103]: own quality end-to-end
+            - text: "for a three-product portfolio: a live pharmacy management platform across web, Android and iOS; a SaaS eCommerce website builder; and a RAG-based AI chatbot. Covering three platforms at once demands a risk-based strategy — judging what earns automation, what needs a manual pass, and what is genuinely ready to ship. Earlier I established the test foundations for enterprise"
+            - strong [ref=e104]: Payroll and ERP
+            - text: systems, where a rounding error is somebody's salary.
+          - paragraph [ref=e105]:
+            - text: I automate what earns it (Playwright and Selenium in Python, structured with the Page Object Model), verify what the interface conceals (Postman and Newman across the API layer, MySQL against the data), and measure what fails under pressure (JMeter, BlazeMeter). I also carry the delivery side, having served as
+            - strong [ref=e106]: Scrum Master / Associate Project Manager
+            - text: through sprint planning, ceremonies and release coordination.
+          - list [ref=e107]:
+            - listitem [ref=e108]:
+              - generic [ref=e109]: Role
+              - strong [ref=e110]: Software QA Engineer
+            - listitem [ref=e111]:
+              - generic [ref=e112]: Experience
+              - strong [ref=e113]: 4+ years
+            - listitem [ref=e114]:
+              - generic [ref=e115]: Education
+              - strong [ref=e116]: BSc in Software Engineering
+            - listitem [ref=e117]:
+              - generic [ref=e118]: Languages
+              - strong [ref=e119]: Bengali (native), English (professional)
+            - listitem [ref=e120]:
+              - generic [ref=e121]: Availability
+              - strong [ref=e122]: Open to full-time & relocation
+            - listitem [ref=e123]:
+              - generic [ref=e124]: Domains
+              - strong [ref=e125]: SaaS, Healthcare, eCommerce, ERP/Payroll, AI
+    - generic [ref=e127]:
+      - generic [ref=e128]:
+        - generic [ref=e129]: 02 — Expertise
+        - heading "What I bring to your release train" [level=2] [ref=e130]
+        - paragraph [ref=e131]: Seven capabilities I use daily to keep products shippable — and keep regressions out of production.
+      - generic [ref=e132]:
+        - article [ref=e133]:
+          - heading "Manual & Functional Testing" [level=3] [ref=e137]
+          - paragraph [ref=e138]: Functional, regression, smoke, sanity, retesting, integration, system, exploratory, ad-hoc, compatibility and UAT — designed with equivalence partitioning, BVA, decision tables and state transition.
+          - list [ref=e139]:
+            - listitem [ref=e140]: Test plans & RTM
+            - listitem [ref=e141]: Test case design & review
+            - listitem [ref=e142]: Test summary reports
+        - article [ref=e143]:
+          - heading "Test Automation" [level=3] [ref=e147]
+          - paragraph [ref=e148]:
+            - text: Playwright (Python) and Selenium WebDriver suites built on the
+            - strong [ref=e149]: Page Object Model
+            - text: — maintainable, reusable and wired for regression runs on every release.
+          - list [ref=e150]:
+            - listitem [ref=e151]: Framework design
+            - listitem [ref=e152]: Regression suite maintenance
+            - listitem [ref=e153]: UI Automator for Android
+        - article [ref=e154]:
+          - heading "API Testing" [level=3] [ref=e159]
+          - paragraph [ref=e160]:
+            - text: REST API validation with Postman collections, reusable environments and request chaining — executed headless via
+            - strong [ref=e161]: Newman
+            - text: in CLI with HTML reports for the team.
+          - list [ref=e162]:
+            - listitem [ref=e163]: Schema & response validation
+            - listitem [ref=e164]: Negative & boundary cases
+            - listitem [ref=e165]: CLI-ready reporting
+        - article [ref=e166]:
+          - heading "Performance Testing" [level=3] [ref=e170]
+          - paragraph [ref=e171]: Load and stress scenarios in Apache JMeter and BlazeMeter, analysing response time, throughput and error rate under concurrent user load before the traffic is real.
+          - list [ref=e172]:
+            - listitem [ref=e173]: Load & stress profiles
+            - listitem [ref=e174]: Bottleneck analysis
+            - listitem [ref=e175]: Baseline vs. release comparison
+        - article [ref=e176]:
+          - heading "Mobile App Testing" [level=3] [ref=e180]
+          - paragraph [ref=e181]: Android and iOS release testing on real devices — functional, compatibility and release-candidate passes for every Google Play and App Store submission.
+          - list [ref=e182]:
+            - listitem [ref=e183]: Device / OS matrix
+            - listitem [ref=e184]: Store release validation
+            - listitem [ref=e185]: Crash & upgrade paths
+        - article [ref=e186]:
+          - heading "Security & Data Validation" [level=3] [ref=e191]
+          - paragraph [ref=e192]: Vulnerability scanning with Acunetix and Burp Suite, plus back-end verification with MySQL queries to prove the numbers on screen match the data underneath.
+          - list [ref=e193]:
+            - listitem [ref=e194]: Vulnerability scans
+            - listitem [ref=e195]: SQL data integrity checks
+            - listitem [ref=e196]: Auth & role validation
+      - generic [ref=e197]:
+        - article [ref=e198]:
+          - generic [ref=e204]:
+            - heading "Agile Delivery & Scrum Leadership" [level=3] [ref=e205]
+            - paragraph [ref=e206]:
+              - text: I don't just file tickets — I help run the sprint. Sprint planning, daily stand-ups, backlog grooming, sprint review and retrospectives in Jira & Trello, serving as
+              - strong [ref=e207]: Scrum Master / Associate Project Manager
+              - text: alongside my QA ownership.
+        - article [ref=e208]:
+          - generic [ref=e213]:
+            - heading "Release Ownership & Sign-off" [level=3] [ref=e214]
+            - paragraph [ref=e215]: From requirement analysis to the go/no-go call. I define entry and exit criteria, maintain the traceability matrix, communicate release readiness to stakeholders, and take responsibility for what ships.
+    - generic [ref=e217]:
+      - generic [ref=e218]:
+        - generic [ref=e219]: 03 — Toolchain
+        - heading "The stack I test with" [level=2] [ref=e220]
+        - paragraph [ref=e221]: Tools I've used on production work — not a list of things I read about once.
+      - generic [ref=e222]:
+        - generic [ref=e223]:
+          - heading "01 Automation" [level=3] [ref=e224]:
+            - generic [ref=e225]: "01"
+            - text: Automation
+          - generic [ref=e226]:
+            - generic [ref=e227]: Playwright (Python)
+            - generic [ref=e228]: Selenium WebDriver
+            - generic [ref=e229]: Page Object Model
+            - generic [ref=e230]: UI Automator
+            - generic [ref=e231]: Pytest
+        - generic [ref=e232]:
+          - heading "02 API & Performance" [level=3] [ref=e233]:
+            - generic [ref=e234]: "02"
+            - text: API & Performance
+          - generic [ref=e235]:
+            - generic [ref=e236]: Postman
+            - generic [ref=e237]: Newman CLI
+            - generic [ref=e238]: Apache JMeter
+            - generic [ref=e239]: BlazeMeter
+            - generic [ref=e240]: REST / JSON
+        - generic [ref=e241]:
+          - heading "03 Security & Data" [level=3] [ref=e242]:
+            - generic [ref=e243]: "03"
+            - text: Security & Data
+          - generic [ref=e244]:
+            - generic [ref=e245]: Acunetix
+            - generic [ref=e246]: Burp Suite
+            - generic [ref=e247]: MySQL
+            - generic [ref=e248]: SQL Queries
+        - generic [ref=e249]:
+          - heading "04 Languages" [level=3] [ref=e250]:
+            - generic [ref=e251]: "04"
+            - text: Languages
+          - generic [ref=e252]:
+            - generic [ref=e253]: Python
+            - generic [ref=e254]: C
+            - generic [ref=e255]: JavaScript (basic)
+            - generic [ref=e256]: HTML
+            - generic [ref=e257]: CSS
+        - generic [ref=e258]:
+          - heading "05 Process & Tracking" [level=3] [ref=e259]:
+            - generic [ref=e260]: "05"
+            - text: Process & Tracking
+          - generic [ref=e261]:
+            - generic [ref=e262]: Jira
+            - generic [ref=e263]: Trello
+            - generic [ref=e264]: Scrum
+            - generic [ref=e265]: Kanban
+            - generic [ref=e266]: SDLC / STLC
+            - generic [ref=e267]: RTM
+        - generic [ref=e268]:
+          - heading "06 Platforms & VCS" [level=3] [ref=e269]:
+            - generic [ref=e270]: "06"
+            - text: Platforms & VCS
+          - generic [ref=e271]:
+            - generic [ref=e272]: Git
+            - generic [ref=e273]: GitHub
+            - generic [ref=e274]: Bitbucket
+            - generic [ref=e275]: Android
+            - generic [ref=e276]: iOS
+            - generic [ref=e277]: Chrome DevTools
+      - paragraph [ref=e278]: // Highlighted chips are the tools I use most weeks.
+    - generic [ref=e280]:
+      - generic [ref=e281]:
+        - generic [ref=e282]: 04 — Experience
+        - heading "Where I've owned quality" [level=2] [ref=e283]
+      - generic [ref=e284]:
+        - article [ref=e285]:
+          - generic [ref=e287]:
+            - generic [ref=e288]:
+              - generic [ref=e289]:
+                - heading "Software QA Engineer" [level=3] [ref=e290]
+                - paragraph [ref=e291]: Zaag Systems Ltd. · Dhaka, Bangladesh
+              - generic [ref=e292]: Mar 2025 — Present
+            - list [ref=e293]:
+              - listitem [ref=e294]:
+                - text: Dedicated QA engineer for the entire ZAAG product portfolio —
+                - strong [ref=e295]: OS Pharmacy
+                - text: (200+ active web users),
+                - strong [ref=e296]: Zaagshop
+                - text: (~1,500 users, 50 paid subscribers) and
+                - strong [ref=e297]: ZaagAI
+                - text: (RAG-based AI chatbot).
+              - listitem [ref=e298]:
+                - text: Own end-to-end QA for the OS Pharmacy
+                - strong [ref=e299]: Android & iOS
+                - text: apps — 5,000+ Google Play installs — running functional, compatibility and release-candidate testing on every store release.
+              - listitem [ref=e300]:
+                - text: "Drive quality for two SaaS MVPs from requirement analysis through release: test strategy, test plans, test cases and"
+                - strong [ref=e301]: go/no-go sign-off
+                - text: .
+              - listitem [ref=e302]: Report, prioritise and track defects in Jira across the full defect life cycle, working directly with developers to stop regressions reaching production.
+              - listitem [ref=e303]: Design and maintain reusable regression suites so every release is validated consistently across web and mobile.
+              - listitem [ref=e304]:
+                - text: Serve as
+                - strong [ref=e305]: Scrum Master / Associate Project Manager
+                - text: — sprint planning, stand-ups, backlog grooming and retrospectives.
+            - generic [ref=e306]:
+              - generic [ref=e307]: Playwright
+              - generic [ref=e308]: Postman
+              - generic [ref=e309]: JMeter
+              - generic [ref=e310]: Jira
+              - generic [ref=e311]: Android / iOS
+              - generic [ref=e312]: Scrum
+        - article [ref=e313]:
+          - generic [ref=e315]:
+            - generic [ref=e316]:
+              - generic [ref=e317]:
+                - heading "Software QA Engineer" [level=3] [ref=e318]
+                - paragraph [ref=e319]: Continental Technologies (BD) Limited · Dhaka, Bangladesh
+              - generic [ref=e320]: Sep 2022 — Feb 2025
+            - list [ref=e321]:
+              - listitem [ref=e322]:
+                - text: Created and maintained comprehensive test plans, scenarios and test cases for enterprise
+                - strong [ref=e323]: Payroll and ERP
+                - text: platforms.
+              - listitem [ref=e324]: Conducted manual functional and non-functional testing — unit, integration, ad-hoc, regression and compatibility across supported browsers and configurations.
+              - listitem [ref=e325]:
+                - text: Built and maintained
+                - strong [ref=e326]: Playwright automation (POM)
+                - text: for retesting and regression, cutting repetitive manual effort every release.
+              - listitem [ref=e327]:
+                - text: Validated back-end data integrity with
+                - strong [ref=e328]: MySQL queries
+                - text: ", confirming payroll and ERP calculations matched expected output."
+              - listitem [ref=e329]: Logged, reproduced and tracked defects to closure, and produced test summary reports communicating release readiness to stakeholders.
+            - generic [ref=e330]:
+              - generic [ref=e331]: Playwright POM
+              - generic [ref=e332]: MySQL
+              - generic [ref=e333]: ERP
+              - generic [ref=e334]: Payroll
+              - generic [ref=e335]: Regression
+    - generic [ref=e337]:
+      - generic [ref=e338]:
+        - generic [ref=e339]: 05 — Portfolio
+        - heading "Products & projects I've tested" [level=2] [ref=e340]
+        - paragraph [ref=e341]: A selection from the 20+ products and projects I've tested — live products with real users, client deliveries, and open-source practice repositories.
+      - group "Filter projects by type" [ref=e342]:
+        - button "All" [pressed] [ref=e343]
+        - button "SaaS Products" [ref=e344]
+        - button "Client Projects" [ref=e345]
+        - button "Automation & Practice" [ref=e346]
+      - generic [ref=e347]:
+        - article [ref=e348]:
+          - generic [ref=e349]:
+            - generic [ref=e350]: Live product
+            - generic [ref=e351]: "01"
+          - heading [level=3] [ref=e352]:
+            - link "OS Pharmacy" [ref=e353]:
+              - /url: https://www.os-pharmacy.com/
+              - text: OS Pharmacy
+              - generic [ref=e354]: ↗
+          - paragraph [ref=e355]: Dedicated QA owner · Web, Android, iOS
+          - paragraph [ref=e356]: Pharmacy management platform serving 200+ active web users, with mobile apps at 5,000+ Google Play installs. I run functional, compatibility and release-candidate testing for every single store release.
+          - list [ref=e357]:
+            - listitem [ref=e358]:
+              - strong [ref=e359]: 200+
+              - generic [ref=e360]: web users
+            - listitem [ref=e361]:
+              - strong [ref=e362]: 5K+
+              - generic [ref=e363]: installs
+            - listitem [ref=e364]:
+              - strong [ref=e365]: "3"
+              - generic [ref=e366]: platforms
+          - generic [ref=e367]:
+            - generic [ref=e368]: Functional
+            - generic [ref=e369]: Compatibility
+            - generic [ref=e370]: Release Testing
+          - generic [ref=e371]:
+            - link "Live site ↗" [ref=e372]:
+              - /url: https://www.os-pharmacy.com/
+            - link "Google Play ↗" [ref=e373]:
+              - /url: https://play.google.com/store/apps/details?id=com.oushodsheba.pharmacy
+            - link "App Store ↗" [ref=e374]:
+              - /url: https://apps.apple.com/us/app/os-pharmacy/id6756063257
+        - article [ref=e375]:
+          - generic [ref=e376]:
+            - generic [ref=e377]: SaaS MVP
+            - generic [ref=e378]: "02"
+          - heading [level=3] [ref=e379]:
+            - link "Zaagshop" [ref=e380]:
+              - /url: https://zaagshop.com/
+              - text: Zaagshop
+              - generic [ref=e381]: ↗
+          - paragraph [ref=e382]: QA lead from requirement analysis → release
+          - paragraph [ref=e383]: SaaS eCommerce website builder. I shaped the test strategy from the requirement phase, wrote the test plans and cases, and signed off each release for ~1,500 users including 50 paying subscribers.
+          - list [ref=e384]:
+            - listitem [ref=e385]:
+              - strong [ref=e386]: 1.5K
+              - generic [ref=e387]: users
+            - listitem [ref=e388]:
+              - strong [ref=e389]: "50"
+              - generic [ref=e390]: paid subs
+            - listitem [ref=e391]:
+              - strong [ref=e392]: MVP
+              - generic [ref=e393]: → release
+          - generic [ref=e394]:
+            - generic [ref=e395]: Test Strategy
+            - generic [ref=e396]: UI/UX
+            - generic [ref=e397]: Regression
+          - link "Live site ↗" [ref=e399]:
+            - /url: https://zaagshop.com/
+        - article [ref=e400]:
+          - generic [ref=e401]:
+            - generic [ref=e402]: AI · RAG
+            - generic [ref=e403]: "03"
+          - heading [level=3] [ref=e404]:
+            - link "ZaagAI" [ref=e405]:
+              - /url: https://zaag.ai/
+              - text: ZaagAI
+              - generic [ref=e406]: ↗
+          - paragraph [ref=e407]: QA from planning through release
+          - paragraph [ref=e408]: AI chatbot MVP built on a Retrieval-Augmented Generation architecture. I validated response accuracy, conversation flows and integration behaviour — testing a system where "correct" isn't a fixed string.
+          - list [ref=e409]:
+            - listitem [ref=e410]:
+              - strong [ref=e411]: RAG
+              - generic [ref=e412]: architecture
+            - listitem [ref=e413]:
+              - strong [ref=e414]: MVP
+              - generic [ref=e415]: stage
+            - listitem [ref=e416]:
+              - strong [ref=e417]: E2E
+              - generic [ref=e418]: coverage
+          - generic [ref=e419]:
+            - generic [ref=e420]: Response accuracy
+            - generic [ref=e421]: Conversation flows
+            - generic [ref=e422]: Integration
+          - link "Live site ↗" [ref=e424]:
+            - /url: https://zaag.ai/
+        - article [ref=e425]:
+          - generic [ref=e426]:
+            - generic [ref=e427]: Client
+            - generic [ref=e428]: "04"
+          - heading [level=3] [ref=e429]:
+            - link "Apex Footwear Limited" [ref=e430]:
+              - /url: https://www.apexfootwearltd.com/
+              - text: Apex Footwear Limited
+              - generic [ref=e431]: ↗
+          - paragraph [ref=e432]: Functional & compatibility testing
+          - paragraph [ref=e433]: Corporate portfolio website for one of the country's best-known footwear brands — validated across browsers, devices and screen sizes.
+          - generic [ref=e434]:
+            - generic [ref=e435]: Cross-browser
+            - generic [ref=e436]: Responsive
+          - link "Live site ↗" [ref=e438]:
+            - /url: https://www.apexfootwearltd.com/
+        - article [ref=e439]:
+          - generic [ref=e440]:
+            - generic [ref=e441]: Client · UK
+            - generic [ref=e442]: "05"
+          - heading [level=3] [ref=e443]:
+            - link "SwitchNest" [ref=e444]:
+              - /url: https://switchnest.co.uk/
+              - text: SwitchNest
+              - generic [ref=e445]: ↗
+          - paragraph [ref=e446]: Functional & workflow testing
+          - paragraph [ref=e447]: UK platform that updates a user's address across multiple organisations in one place. Heavy on multi-step workflows, third-party integrations and data accuracy.
+          - generic [ref=e448]:
+            - generic [ref=e449]: Workflow
+            - generic [ref=e450]: Data validation
+          - link "Live site ↗" [ref=e452]:
+            - /url: https://switchnest.co.uk/
+        - article [ref=e453]:
+          - generic [ref=e454]:
+            - generic [ref=e455]: Client
+            - generic [ref=e456]: "06"
+          - heading [level=3] [ref=e457]:
+            - link "Northern Handicraft" [ref=e458]:
+              - /url: https://northernhandicraft.com/
+              - text: Northern Handicraft
+              - generic [ref=e459]: ↗
+          - paragraph [ref=e460]: eCommerce QA
+          - paragraph [ref=e461]: Marketplace for sustainable handmade products. Cart, checkout, catalogue and order-flow validation from browse to payment confirmation.
+          - generic [ref=e462]:
+            - generic [ref=e463]: Checkout flow
+            - generic [ref=e464]: Catalogue
+          - link "Live site ↗" [ref=e466]:
+            - /url: https://northernhandicraft.com/
+        - article [ref=e467]:
+          - generic [ref=e468]:
+            - generic [ref=e469]: Client
+            - generic [ref=e470]: "07"
+          - heading [level=3] [ref=e471]:
+            - link "Go Global" [ref=e472]:
+              - /url: https://go-global.space/
+              - text: Go Global
+              - generic [ref=e473]: ↗
+          - paragraph [ref=e474]: Marketplace QA
+          - paragraph [ref=e475]: Two-sided marketplace connecting high-quality freelancers with companies. Tested role-based journeys, matching flows and account management.
+          - generic [ref=e476]:
+            - generic [ref=e477]: Role-based access
+            - generic [ref=e478]: End-to-end
+          - link "Live site ↗" [ref=e480]:
+            - /url: https://go-global.space/
+        - article [ref=e481]:
+          - generic [ref=e482]:
+            - generic [ref=e483]: Client
+            - generic [ref=e484]: "08"
+          - heading [level=3] [ref=e485]:
+            - link "Mumuso Bangladesh" [ref=e486]:
+              - /url: https://www.mumuso.com.bd/
+              - text: Mumuso Bangladesh
+              - generic [ref=e487]: ↗
+          - paragraph [ref=e488]: eCommerce QA
+          - paragraph [ref=e489]: Premium beauty and lifestyle retailer — skincare, cosmetics and home accessories. Category browsing, search, wishlist, cart and the full order journey validated through to confirmation.
+          - generic [ref=e490]:
+            - generic [ref=e491]: Checkout flow
+            - generic [ref=e492]: Catalogue
+            - generic [ref=e493]: Responsive
+          - link "Live site ↗" [ref=e495]:
+            - /url: https://www.mumuso.com.bd/
+        - article [ref=e496]:
+          - generic [ref=e497]:
+            - generic [ref=e498]: Client · Non-profit
+            - generic [ref=e499]: "09"
+          - heading [level=3] [ref=e500]:
+            - link "Danim Foundation" [ref=e501]:
+              - /url: https://dunimfoundation.org/
+              - text: Danim Foundation
+              - generic [ref=e502]: ↗
+          - paragraph [ref=e503]: Functional & donation-flow testing
+          - paragraph [ref=e504]: Government-registered, non-political and non-profit humanitarian organisation. Tested donation and zakat journeys, volunteer sign-up and campaign pages, including Bangla content rendering across devices.
+          - generic [ref=e505]:
+            - generic [ref=e506]: Donation flow
+            - generic [ref=e507]: Forms
+            - generic [ref=e508]: Bangla content
+          - link "Live site ↗" [ref=e510]:
+            - /url: https://dunimfoundation.org/
+        - article [ref=e511]:
+          - generic [ref=e512]:
+            - generic [ref=e513]: Client
+            - generic [ref=e514]: "10"
+          - heading [level=3] [ref=e515]:
+            - link "Noor e Madina Travels" [ref=e516]:
+              - /url: https://nooremadinatravels.com/
+              - text: Noor e Madina Travels
+              - generic [ref=e517]: ↗
+          - paragraph [ref=e518]: Booking & enquiry flow QA
+          - paragraph [ref=e519]: Bangladesh's most personal Hajj & Umrah service. Verified package listings and pricing across package types, the booking and contact-enquiry journeys, and form validation end to end.
+          - generic [ref=e520]:
+            - generic [ref=e521]: Booking flow
+            - generic [ref=e522]: Pricing
+            - generic [ref=e523]: Forms
+          - link "Live site ↗" [ref=e525]:
+            - /url: https://nooremadinatravels.com/
+        - article [ref=e526]:
+          - generic [ref=e527]:
+            - generic [ref=e528]: Client · Saudi
+            - generic [ref=e529]: "11"
+          - heading [level=3] [ref=e530]:
+            - link "Dr. Wash" [ref=e531]:
+              - /url: https://play.google.com/store/apps/details?id=sa.drwash.www&hl=en
+              - text: Dr. Wash
+              - generic [ref=e532]: ↗
+          - paragraph [ref=e533]: Mobile app QA · Android, iOS
+          - paragraph [ref=e534]: Professional car-washing service in Saudi Arabia, delivered as a mobile app. Tested service selection, scheduling and the booking journey across both store builds.
+          - generic [ref=e535]:
+            - generic [ref=e536]: Mobile
+            - generic [ref=e537]: Booking flow
+            - generic [ref=e538]: Cross-platform
+          - generic [ref=e539]:
+            - link "Google Play ↗" [ref=e540]:
+              - /url: https://play.google.com/store/apps/details?id=sa.drwash.www&hl=en
+            - link "App Store ↗" [ref=e541]:
+              - /url: https://apps.apple.com/gb/app/dr-wash/id6795534030
+        - article [ref=e542]:
+          - generic [ref=e543]:
+            - generic [ref=e544]: Performance
+            - generic [ref=e545]: "12"
+          - heading [level=3] [ref=e546]:
+            - link "PCUK Chatbot Load Test" [ref=e547]:
+              - /url: https://github.com/Tuhingits/PerformanceTesting_on_PCUKchatbotchatbot
+              - text: PCUK Chatbot Load Test
+              - generic [ref=e548]: ↗
+          - paragraph [ref=e549]: JMeter · BlazeMeter
+          - paragraph [ref=e550]: Load and stress testing of the Prostate Cancer UK chatbot — analysing response time and throughput under concurrent user load to find the breaking point before users did.
+          - generic [ref=e551]:
+            - generic [ref=e552]: JMeter
+            - generic [ref=e553]: Load
+            - generic [ref=e554]: Stress
+          - link "View repository ↗" [ref=e556]:
+            - /url: https://github.com/Tuhingits/PerformanceTesting_on_PCUKchatbotchatbot
+    - generic [ref=e558]:
+      - generic [ref=e559]:
+        - generic [ref=e560]: 06 — How I work
+        - heading "My QA process, end to end" [level=2] [ref=e561]
+        - paragraph [ref=e562]: The same loop whether it's a two-week MVP sprint or an enterprise ERP release.
+      - list [ref=e563]:
+        - listitem [ref=e564]:
+          - generic [ref=e565]: "01"
+          - heading "Requirement Analysis" [level=3] [ref=e566]
+          - paragraph [ref=e567]:
+            - text: Read the spec like an adversary. Ambiguities, missing acceptance criteria and edge cases get raised
+            - emphasis [ref=e568]: before
+            - text: a line of code is written.
+        - listitem [ref=e569]:
+          - generic [ref=e570]: "02"
+          - heading "Test Planning & Strategy" [level=3] [ref=e571]
+          - paragraph [ref=e572]: Scope, entry/exit criteria, environments, risk-based priorities and the requirement traceability matrix — so coverage is provable, not assumed.
+        - listitem [ref=e573]:
+          - generic [ref=e574]: "03"
+          - heading "Test Design" [level=3] [ref=e575]
+          - paragraph [ref=e576]: "Scenarios and cases using black-box techniques: equivalence partitioning, boundary values, decision tables, state transition and error guessing."
+        - listitem [ref=e577]:
+          - generic [ref=e578]: "04"
+          - heading "Execution & Automation" [level=3] [ref=e579]
+          - paragraph [ref=e580]: Manual passes for new behaviour, automated Playwright/Selenium suites for regression, Postman/Newman for the API layer, JMeter for load.
+        - listitem [ref=e581]:
+          - generic [ref=e582]: "05"
+          - heading "Defect Management" [level=3] [ref=e583]
+          - paragraph [ref=e584]: Clear reproduction steps, severity and priority, evidence attached, tracked in Jira through the full defect life cycle until verified closed.
+        - listitem [ref=e585]:
+          - generic [ref=e586]: "06"
+          - heading "Reporting & Sign-off" [level=3] [ref=e587]
+          - paragraph [ref=e588]: Test summary reports, coverage and defect metrics, and an honest go/no-go recommendation stakeholders can actually act on.
+    - generic [ref=e590]:
+      - generic [ref=e591]:
+        - generic [ref=e592]: 07 — Background
+        - heading "Education & beyond" [level=2] [ref=e593]
+      - generic [ref=e594]:
+        - article [ref=e595]:
+          - heading "BSc in Software Engineering" [level=3] [ref=e600]
+          - paragraph [ref=e601]: Daffodil International University, Dhaka · 2021 · CGPA 3.01
+          - paragraph [ref=e602]: A software engineering foundation — SDLC, databases, programming and systems design — that I put to work on the testing side every day.
+        - article [ref=e603]:
+          - heading "Community & Languages" [level=3] [ref=e608]
+          - paragraph [ref=e609]: Ex-Member, Daffodil ISACA Student Group
+          - paragraph [ref=e610]: Bengali (native) and English (professional working proficiency). Comfortable working with distributed, English-speaking product teams across time zones.
+    - generic [ref=e612]:
+      - generic [ref=e613]:
+        - generic [ref=e614]: 08 — Contact
+        - heading "Let's ship something that doesn't break" [level=2] [ref=e615]
+        - paragraph [ref=e616]: Hiring for a QA role, need an audit of your release process, or want automation coverage you can trust? I'd like to hear about it.
+      - generic [ref=e617]:
+        - generic [ref=e618]:
+          - link "Email tuhinhossain212209@gmail.com" [ref=e619]:
+            - /url: mailto:tuhinhossain212209@gmail.com
+            - generic [ref=e624]:
+              - generic [ref=e625]: Email
+              - strong [ref=e626]: tuhinhossain212209@gmail.com
+          - link "Phone / WhatsApp +880 1714 732823" [ref=e627]:
+            - /url: tel:+8801714732823
+            - generic [ref=e631]:
+              - generic [ref=e632]: Phone / WhatsApp
+              - strong [ref=e633]: +880 1714 732823
+          - link "LinkedIn /in/tuhin-hossain" [ref=e634]:
+            - /url: https://www.linkedin.com/in/tuhin-hossain-73a791157
+            - generic [ref=e638]:
+              - generic [ref=e639]: LinkedIn
+              - strong [ref=e640]: /in/tuhin-hossain
+          - link "GitHub github.com/Tuhingits" [ref=e641]:
+            - /url: https://github.com/Tuhingits
+            - generic [ref=e645]:
+              - generic [ref=e646]: GitHub
+              - strong [ref=e647]: github.com/Tuhingits
+          - generic [ref=e648]:
+            - strong [ref=e649]: Location
+            - text: Mirpur 2, Dhaka 1216, Bangladesh — open to remote roles and relocation.
+            - strong [ref=e650]: References
+            - text: Senior QA references available on request.
+        - generic [ref=e651]:
+          - generic [ref=e652]:
+            - generic [ref=e653]: Your name
+            - textbox "Your name" [ref=e654]:
+              - /placeholder: Jane Doe
+          - generic [ref=e655]:
+            - generic [ref=e656]: Email
+            - textbox "Email" [ref=e657]:
+              - /placeholder: jane@company.com
+          - generic [ref=e658]:
+            - generic [ref=e659]: Subject
+            - textbox "Subject" [ref=e660]:
+              - /placeholder: QA Engineer role at ...
+          - generic [ref=e661]:
+            - generic [ref=e662]: Message
+            - textbox "Message" [ref=e663]:
+              - /placeholder: Tell me about the product, the team and what quality looks like for you.
+          - generic [ref=e664]:
+            - text: Company (leave this empty)
+            - textbox [ref=e665]
+          - button "Send message" [ref=e666]
+          - status [ref=e670]
+  - contentinfo [ref=e671]:
+    - generic [ref=e672]:
+      - paragraph [ref=e673]: © 2026 Tuhin Hossain — Software QA Engineer, Dhaka.
+      - paragraph [ref=e674]: Built & tested by hand. ✓ all checks passed
+      - paragraph [ref=e675]: ● 1,248 unique visitors

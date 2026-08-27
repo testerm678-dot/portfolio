@@ -543,6 +543,40 @@
     });
   }
 
+    /* ---------------- Visitor counter ----------------
+      The endpoint is optional so the static portfolio remains usable before
+      the Apps Script web app is deployed. sessionStorage makes one browser
+      session count once while keeping the visitor anonymous. */
+  var VISITOR_ENDPOINT = SHEET_URL;
+  var visitorTotal = $('#visitorTotal');
+  if (visitorTotal && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]{25,}\/exec$/.test(VISITOR_ENDPOINT)) {
+    var sessionId = null;
+    try {
+      sessionId = sessionStorage.getItem('th-visitor-session');
+      if (!sessionId) {
+        sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
+          String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+        sessionStorage.setItem('th-visitor-session', sessionId);
+      }
+    } catch (e) { /* private mode or blocked storage */ }
+
+    if (sessionId) {
+      var callbackName = '__thVisitorCallback';
+      var script = document.createElement('script');
+      var cleanup = function () {
+        window[callbackName] = null;
+        if (script.parentNode) script.parentNode.removeChild(script);
+      };
+      window[callbackName] = function (data) {
+        if (data && typeof data.total === 'number') visitorTotal.textContent = format(data.total);
+        cleanup();
+      };
+      script.onerror = cleanup;
+      script.src = VISITOR_ENDPOINT + '?session=' + encodeURIComponent(sessionId) + '&callback=' + callbackName;
+      document.head.appendChild(script);
+    }
+  }
+
   /* ---------------- Footer year ---------------- */
   var yearEl = $('#year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
