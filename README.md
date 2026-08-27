@@ -146,19 +146,23 @@ Leave it empty and the form simply emails only — no stray request is made. A m
 URL is rejected by a length check on the deployment id, so a half-pasted placeholder
 can never be treated as a live endpoint.
 
-### The visitor counter
+### The visitor counter on Vercel
 
-The footer counter starts at `0` and becomes live when `SHEET_URL` is configured. On the
-first page load in a browser tab, the site creates a random anonymous
-session ID in `sessionStorage` and sends it to the same Apps Script web app. The script
-stores each new ID once in a `Visitors` sheet under a script lock, then returns the total.
-Reloads in the same tab do not create another visitor. No name, email, IP address or
-device information is stored. The read uses a validated JSONP callback because the
-static site and Apps Script deployment have different origins.
+The footer counter starts at `0` and calls the same-origin `/api/visitors` Vercel
+Function. On the first page load in a browser tab, the site creates a random anonymous
+session ID in `sessionStorage`. The function stores that ID once in Upstash Redis and
+atomically increments the total. Reloads in the same tab do not create another visitor.
+No name, email, IP address or device information is stored.
 
-After deploying the updated [`contact-form-sheet.gs`](contact-form-sheet.gs), use that
-deployment URL for `SHEET_URL` in `assets/js/main.js`. The first analytics request will
-create the `Visitors` sheet automatically.
+To enable it on Vercel:
+
+1. Import the project into Vercel and deploy it once.
+2. In Vercel, open **Storage → Create Database → Upstash Redis** and connect it to this project.
+3. Redeploy the project so `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are available to the function.
+
+The first real browser session creates the Redis total at `1`; another browser creates `2`.
+The old [`contact-form-sheet.gs`](contact-form-sheet.gs) integration remains available for
+the contact form, but it is no longer used by the visitor counter.
 
 > **Verify delivery, not the response.** A key created against the wrong mailbox sends
 > every message into a void while the API still answers `success: true` — that happened

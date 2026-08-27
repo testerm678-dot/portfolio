@@ -543,13 +543,12 @@
     });
   }
 
-    /* ---------------- Visitor counter ----------------
-      The endpoint is optional so the static portfolio remains usable before
-      the Apps Script web app is deployed. sessionStorage makes one browser
-      session count once while keeping the visitor anonymous. */
-  var VISITOR_ENDPOINT = SHEET_URL;
+  /* ---------------- Visitor counter ----------------
+     Vercel serves this same-origin endpoint. sessionStorage makes one browser
+     session count once while keeping the visitor anonymous. */
+  var VISITOR_ENDPOINT = '/api/visitors';
   var visitorTotal = $('#visitorTotal');
-  if (visitorTotal && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]{25,}\/exec$/.test(VISITOR_ENDPOINT)) {
+  if (visitorTotal && typeof window.fetch === 'function') {
     var sessionId = null;
     try {
       sessionId = sessionStorage.getItem('th-visitor-session');
@@ -561,19 +560,12 @@
     } catch (e) { /* private mode or blocked storage */ }
 
     if (sessionId) {
-      var callbackName = '__thVisitorCallback';
-      var script = document.createElement('script');
-      var cleanup = function () {
-        window[callbackName] = null;
-        if (script.parentNode) script.parentNode.removeChild(script);
-      };
-      window[callbackName] = function (data) {
-        if (data && typeof data.total === 'number') visitorTotal.textContent = format(data.total);
-        cleanup();
-      };
-      script.onerror = cleanup;
-      script.src = VISITOR_ENDPOINT + '?session=' + encodeURIComponent(sessionId) + '&callback=' + callbackName;
-      document.head.appendChild(script);
+      window.fetch(VISITOR_ENDPOINT + '?session=' + encodeURIComponent(sessionId), { cache: 'no-store' })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (data && typeof data.total === 'number') visitorTotal.textContent = format(data.total);
+        })
+        .catch(function () { /* analytics must never affect the portfolio */ });
     }
   }
 
