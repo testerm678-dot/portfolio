@@ -543,32 +543,6 @@
     });
   }
 
-  /* ---------------- Visitor counter ----------------
-     Vercel serves this same-origin endpoint. sessionStorage makes one browser
-     session count once while keeping the visitor anonymous. */
-  var VISITOR_ENDPOINT = '/api/visitors';
-  var visitorTotal = $('#visitorTotal');
-  if (visitorTotal && typeof window.fetch === 'function') {
-    var sessionId = null;
-    try {
-      sessionId = sessionStorage.getItem('th-visitor-session');
-      if (!sessionId) {
-        sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
-          String(Date.now()) + '-' + Math.random().toString(36).slice(2);
-        sessionStorage.setItem('th-visitor-session', sessionId);
-      }
-    } catch (e) { /* private mode or blocked storage */ }
-
-    if (sessionId) {
-      window.fetch(VISITOR_ENDPOINT + '?session=' + encodeURIComponent(sessionId), { cache: 'no-store' })
-        .then(function (res) { return res.ok ? res.json() : null; })
-        .then(function (data) {
-          if (data && typeof data.total === 'number') visitorTotal.textContent = format(data.total);
-        })
-        .catch(function () { /* analytics must never affect the portfolio */ });
-    }
-  }
-
   /* ---------------- Footer year ---------------- */
   var yearEl = $('#year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
